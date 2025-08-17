@@ -1,0 +1,520 @@
+{
+  "name": "X Post Generator",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "hours",
+              "hoursInterval": 8
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -928,
+        -320
+      ],
+      "id": "3e98bf90-a3a8-4f58-93cd-e4f79e63c2c7",
+      "name": "Schedule Trigger"
+    },
+    {
+      "parameters": {
+        "schemaType": "manual",
+        "inputSchema": "{\n  \"type\": \"object\",\n  \"properties\": {\n    \"text\": {\n      \"type\": \"string\"\n    },\n    \"post\": {\n      \"type\": \"string\"\n    }\n  },\n  \"required\": [\"text\", \"post\"]\n}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.3,
+      "position": [
+        -480,
+        -160
+      ],
+      "id": "1a02c804-b6c5-4cc0-b18f-9d068dc5d7d2",
+      "name": "Structured Output Parser"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        -720,
+        -144
+      ],
+      "id": "d42ac837-c7a6-49ce-a00f-b8abe3285e9b",
+      "name": "Gemini 2.5 Pro",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "<CREDENTIAL_ID>",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "text": "={{ $json.output.post }}",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.twitter",
+      "typeVersion": 2,
+      "position": [
+        -256,
+        -336
+      ],
+      "id": "0e95d4b4-6c65-46da-8e87-049851b5940d",
+      "name": "Post to X",
+      "credentials": {
+        "twitterOAuth2Api": {
+          "id": "<CREDENTIAL_ID>",
+          "name": ""
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "<DOCUMENT_ID>",
+          "mode": "list",
+          "cachedResultName": "Workflow Logs",
+          "cachedResultUrl": ""
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": ""
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Timestamp:": "={{ $now.format('yyyy-MM-dd hh:m a') }}",
+            "Workflow:": "={{ $workflow.name }}",
+            "Output:": "=Error Execution:{{ $execution.id }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Timestamp:",
+              "displayName": "Timestamp:",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Workflow:",
+              "displayName": "Workflow:",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Output:",
+              "displayName": "Output:",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.6,
+      "position": [
+        0,
+        -160
+      ],
+      "id": "6c7a1484-bc5c-402a-9106-bb9fbb4672ba",
+      "name": "Add Error to Logs",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "<CREDENTIAL_ID>",
+          "name": ""
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "webhook",
+        "content": "=Error: {{ $workflow.name }} did not run. Please observe the logs. \n\nhttps://docs.google.com/spreadsheets/d/<DOCUMENT_ID>/edit?gid=0#gid=0",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.discord",
+      "typeVersion": 2,
+      "position": [
+        192,
+        -160
+      ],
+      "id": "5ecd9751-f95f-4712-992d-863a316cfe7a",
+      "name": "Send Error Alert",
+      "webhookId": "<WEBHOOK_ID>",
+      "credentials": {
+        "discordWebhookApi": {
+          "id": "<CREDENTIAL_ID>",
+          "name": ""
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "webhook",
+        "content": "=Your daily X post for [Your Company Name]\n\n{{ $('Generate X Post').item.json.output.text }}\n\nThe following will be posted to X:\n\n{{ $('Generate X Post').item.json.output.post }}",
+        "options": {
+          "wait": true
+        }
+      },
+      "type": "n8n-nodes-base.discord",
+      "typeVersion": 2,
+      "position": [
+        192,
+        -336
+      ],
+      "id": "d6f5189b-d227-4c70-9663-e4795691f1a9",
+      "name": "Send Post Notification",
+      "webhookId": "<WEBHOOK_ID>",
+      "credentials": {
+        "discordWebhookApi": {
+          "id": "<CREDENTIAL_ID>",
+          "name": ""
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "<DOCUMENT_ID>",
+          "mode": "list",
+          "cachedResultName": "Workflow Logs",
+          "cachedResultUrl": ""
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": ""
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Timestamp:": "={{ $now.format('yyyy-MM-dd hh:m a') }}",
+            "Workflow:": "={{ $workflow.name }}",
+            "Output:": "=Success: {{ $execution.id }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Timestamp:",
+              "displayName": "Timestamp:",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Workflow:",
+              "displayName": "Workflow:",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Output:",
+              "displayName": "Output:",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.6,
+      "position": [
+        0,
+        -336
+      ],
+      "id": "2e498703-7d38-43ac-a834-d8f2d1ba2f51",
+      "name": "Add Success to Logs",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "<CREDENTIAL_ID>",
+          "name": ""
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "## Run On Schedule \nThis is triggered three times a day",
+        "height": 304,
+        "width": 272,
+        "color": 4
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -1024,
+        -432
+      ],
+      "typeVersion": 1,
+      "id": "c0c71e0f-fe41-48d4-ad95-283b3fb57f7c",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "content": "## Generate Post\nThe LLM Chain generates a post and parses the text in preparation for posting to X",
+        "height": 544,
+        "width": 384,
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -736,
+        -432
+      ],
+      "typeVersion": 1,
+      "id": "16d13e8f-5cec-4c9c-a36d-75ecc3b9635e",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "content": "## Post to X \nOnce the text is generated, it's posted to X automatically",
+        "height": 256,
+        "color": 7
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -336,
+        -432
+      ],
+      "typeVersion": 1,
+      "id": "0ca4d9c0-8649-4980-a510-6fedcf8ce76e",
+      "name": "Sticky Note2"
+    },
+    {
+      "parameters": {
+        "content": "## Logging Data\nAdd the success or error of the workflow in the workflow logs.",
+        "height": 496,
+        "width": 480,
+        "color": 6
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -80,
+        -432
+      ],
+      "typeVersion": 1,
+      "id": "8bed2ef9-1d6a-4f43-992d-22d115d49c14",
+      "name": "Sticky Note3"
+    },
+    {
+      "parameters": {
+        "content": "# Automated X Post Generator with an AI Agent\n",
+        "width": 560,
+        "color": 3
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -656,
+        -608
+      ],
+      "typeVersion": 1,
+      "id": "bec180a4-c5eb-457f-aa15-089dcd01eda6",
+      "name": "Sticky Note4"
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        -656,
+        -16
+      ],
+      "id": "c4499fb2-2a84-4dde-93fe-5c641bcf8d2c",
+      "name": "Simple Memory"
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.toolThink",
+      "typeVersion": 1.1,
+      "position": [
+        -544,
+        -16
+      ],
+      "id": "737f617c-2de5-4bab-9d78-83fe681b8085",
+      "name": "Think"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "You are a social media manager for [Your Company Name], a software company that provides:\n\nWeb Development services (scalable, modern websites, with optional AI integration).\n\nAI Automation workflows & AI agents (helping businesses save time, cut costs, and increase productivity).\n\nYour task is to generate engaging X (Twitter) posts that highlight topics related to:\n\n[Your Company Name]’s services\n\nAI, AI agents, and AI automation\n\nProductivity, efficiency, and problem-solving in business\n\nPosting Guidelines\n\nTone & Voice:\n\nConversational, professional, and approachable\n\nGenuinely curious and thoughtful — not pushy or salesy\n\nAvoid hype, buzzwords, and exaggerated claims\n\nStyle (Problem-Centric & Hypothesis-Driven):\n\nLead with a problem or challenge that businesses often face (in web dev, AI adoption, productivity, etc.)\n\nCurious framing: show genuine interest in the reader’s perspective (avoid one-way broadcasting)\n\nHypothesis-driven: frame insights as if testing an assumption (e.g., “We often see teams struggle with X — is that something you’ve run into?”).\n\nFormat & Constraints:\n\nEach post should fit within X’s character limits (≤ 280 characters) and no more than 3 sentences, keep them brief.\n\nUse plain language (not overly technical unless targeting devs)\n\nAvoid hashtags unless highly relevant\n\nEmojis may be used sparingly for emphasis or tone (optional)\n\nOutput:\n\nGenerate 1 post idea per request\n\nPosts should connect business problems → potential solutions → how [Your Company Name] or AI could help\n\nThe post should feel like it invites a response or sparks curiosity. Tighten the language for quick scanability (X rewards brevity). Frame the question more directly so people feel invited to answer.\n\nDo not repeat posts.",
+        "hasOutputParser": true,
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2.1,
+      "position": [
+        -704,
+        -320
+      ],
+      "id": "7beb12c2-00c7-41bd-b2c3-428dd4ce5ae2",
+      "name": "Generate X Post",
+      "onError": "continueErrorOutput"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "Generate X Post",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Structured Output Parser": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "Generate X Post",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Gemini 2.5 Pro": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Generate X Post",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Post to X": {
+      "main": [
+        [
+          {
+            "node": "Add Success to Logs",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Add Error to Logs": {
+      "main": [
+        [
+          {
+            "node": "Send Error Alert",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send Post Notification": {
+      "main": [
+        []
+      ]
+    },
+    "Add Success to Logs": {
+      "main": [
+        [
+          {
+            "node": "Send Post Notification",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "Generate X Post",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Think": {
+      "ai_tool": [
+        [
+          {
+            "node": "Generate X Post",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Generate X Post": {
+      "main": [
+        [
+          {
+            "node": "Post to X",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Add Error to Logs",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "timezone": "America/Chicago",
+    "callerPolicy": "workflowsFromSameOwner"
+  },
+  "versionId": "54741249-c336-4c90-9168-35867592fee6",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "<INSTANCE_ID>"
+  },
+  "id": "5bLssWzAIsAoR2a1",
+  "tags": []
+}

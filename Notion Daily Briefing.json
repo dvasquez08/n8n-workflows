@@ -1,0 +1,178 @@
+{
+  "name": "Notion Daily Briefing",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "triggerAtHour": 8
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -400,
+        -96
+      ],
+      "id": "<NOTION_DATABASE_ID>",
+      "name": "Schedule Trigger"
+    },
+    {
+      "parameters": {
+        "resource": "databasePage",
+        "operation": "getAll",
+        "databaseId": {
+          "__rl": true,
+          "value": "<DATABASE_ID>",
+          "mode": "list",
+          "cachedResultName": "<DATABASE_NAME>",
+          "cachedResultUrl": "<NOTION_DATABASE_URL>"
+        },
+        "returnAll": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.notion",
+      "typeVersion": 2.2,
+      "position": [
+        -208,
+        -96
+      ],
+      "id": "aed91af5-a788-4f09-9829-8e2de9d0a2ef",
+      "name": "Get List From Notion",
+      "credentials": {
+        "notionApi": {
+          "id": "<CREDENTIAL_ID>",
+          "name": "Notion account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "aggregate": "aggregateAllItemData",
+        "include": "specifiedFields",
+        "fieldsToInclude": "name",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.aggregate",
+      "typeVersion": 1,
+      "position": [
+        -32,
+        -96
+      ],
+      "id": "13fda84a-a109-44be-adc5-97d28b57a9d6",
+      "name": "Combine All Items"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "51325da9-384c-49a5-9f4e-28cc1f57e102",
+              "name": "TaskList",
+              "value": "={{ $json.data.map(task => `<li>${task.name}</li>`).join('') }}",
+              "type": "string"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "include": "selected",
+        "includeFields": "name",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        144,
+        -96
+      ],
+      "id": "53f2d6ea-b09c-4140-9864-393f1a7e5800",
+      "name": "Set the Fields"
+    },
+    {
+      "parameters": {
+        "sendTo": "<SEND_TO_ADDRESS@domain.com>",
+        "subject": "Your Daily Briefing",
+        "message": "=Good morning!<br><br>\nThis is what you have for the day:\n<ul>\n{{ $json.TaskList }}\n</ul>\n\nTackle these tasks for today, you can do it!<br><br>\nHave a great day\n",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        336,
+        -96
+      ],
+      "id": "9b850e5b-f8d5-4f3b-85c5-a17cb46565b3",
+      "name": "Daily Email",
+      "webhookId": "",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "<CREDENTIAL_ID>",
+          "name": "Gmail account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "Get List From Notion",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get List From Notion": {
+      "main": [
+        [
+          {
+            "node": "Combine All Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Combine All Items": {
+      "main": [
+        [
+          {
+            "node": "Set the Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set the Fields": {
+      "main": [
+        [
+          {
+            "node": "Daily Email",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "533b7694-6ef4-46b2-b7a2-30cb54071e0c",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "<INSTANCE_ID>"
+  },
+  "id": "",
+  "tags": []
+}

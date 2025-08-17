@@ -1,0 +1,167 @@
+{
+  "name": "Lead Capture CRM",
+  "nodes": [
+    {
+      "parameters": {
+        "formTitle": "Let's Get in Touch",
+        "formDescription": "Let us know a bit about you and we'll get back to you as soon as we can",
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": "First Name",
+              "placeholder": "Enter first name here",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Last Name",
+              "placeholder": "Enter last name here",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Email Address",
+              "placeholder": "Your email address here",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Phone Number"
+            }
+          ]
+        },
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.formTrigger",
+      "typeVersion": 2.2,
+      "position": [
+        -352,
+        -48
+      ],
+      "id": "2d39ac7f-bf5b-431d-bad2-1d3ad5f8fcfb",
+      "name": "On form submission",
+      "webhookId": "<WEBHOOK_ID>"
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "email": "={{ $json['Email Address'] }}",
+        "additionalFields": {
+          "firstName": "={{ $json['First Name'] }}",
+          "lastName": "={{ $json['Last Name'] }}",
+          "phoneNumber": "={{ $json['Phone Number'] }}"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.hubspot",
+      "typeVersion": 2.1,
+      "position": [
+        -160,
+        -48
+      ],
+      "id": "0beb34d4-f27c-40e3-9a44-f87bdacc677d",
+      "name": "Create or update a contact",
+      "credentials": {
+        "hubspotOAuth2Api": {
+          "id": "<CREDENTIAL_ID>",
+          "name": "HubSpot account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $json.properties.email.value }}",
+        "subject": "=Hey {{ $json.properties.firstname.value }}! Thanks for reaching out!",
+        "message": "=<p>Nice to meet you, {{ $json.properties.firstname.versions[0].value }}!</p>\n<br />\n<p>We're happy to see that you are interested in our services. One of our team members will be in touch with you shortly. In the meantime, feel free to read more about us at our website at http://yourwebsite.com.</p>\n<br />\n<p>Excited to see your potential? So are we! Talk to you soon!</p>\n<br />\n<p>[Your Company Name] Team</p>",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        32,
+        -48
+      ],
+      "id": "dce87872-6ff9-4dd0-aa35-61bab50cd134",
+      "name": "Send a message",
+      "webhookId": "<WEBHOOK_ID>",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "<CREDENTIAL_ID>",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "<CHAT_ID>",
+        "text": "={{ $('Create or update a contact').item.json.properties.hs_full_name_or_email.value }} has signed up to inquire about our services! \n\nA welcome message has been sent to {{ $('Create or update a contact').item.json.properties.email.value }} and contact information has been added to HubSpot. ",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        224,
+        -48
+      ],
+      "id": "e498a43a-80c9-4179-9bd9-6f242334d9b4",
+      "name": "Send a text message",
+      "webhookId": "<WEBHOOK_ID>",
+      "credentials": {
+        "telegramApi": {
+          "id": "<CREDENTIAL_ID>",
+          "name": "Telegram account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "On form submission": {
+      "main": [
+        [
+          {
+            "node": "Create or update a contact",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create or update a contact": {
+      "main": [
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send a message": {
+      "main": [
+        [
+          {
+            "node": "Send a text message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "ae88a3c8-f6e9-415e-932f-e71dcf5aea0b",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "<INSTANCE_ID>"
+  },
+  "id": "3Qez32Mxr1xCS7Cm",
+  "tags": []
+}
