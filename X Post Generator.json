@@ -15,10 +15,10 @@
       "type": "n8n-nodes-base.scheduleTrigger",
       "typeVersion": 1.2,
       "position": [
-        -928,
-        -320
+        -944,
+        -304
       ],
-      "id": "3e98bf90-a3a8-4f58-93cd-e4f79e63c2c7",
+      "id": "<NODE_ID_1>",
       "name": "Schedule Trigger"
     },
     {
@@ -30,9 +30,9 @@
       "typeVersion": 1.3,
       "position": [
         -480,
-        -160
+        -64
       ],
-      "id": "1a02c804-b6c5-4cc0-b18f-9d068dc5d7d2",
+      "id": "<NODE_ID_2>",
       "name": "Structured Output Parser"
     },
     {
@@ -42,14 +42,14 @@
       "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
       "typeVersion": 1,
       "position": [
-        -720,
-        -144
+        -704,
+        -48
       ],
-      "id": "d42ac837-c7a6-49ce-a00f-b8abe3285e9b",
+      "id": "<NODE_ID_3>",
       "name": "Gemini 2.5 Pro",
       "credentials": {
         "googlePalmApi": {
-          "id": "<CREDENTIAL_ID>",
+          "id": "<YOUR_GOOGLE_API_ID>",
           "name": "Google Gemini(PaLM) Api account"
         }
       }
@@ -63,14 +63,14 @@
       "typeVersion": 2,
       "position": [
         -256,
-        -336
+        -320
       ],
-      "id": "0e95d4b4-6c65-46da-8e87-049851b5940d",
+      "id": "<NODE_ID_4>",
       "name": "Post to X",
       "credentials": {
         "twitterOAuth2Api": {
-          "id": "<CREDENTIAL_ID>",
-          "name": ""
+          "id": "<YOUR_TWITTER_API_ID>",
+          "name": "<YOUR_TWITTER_ACCOUNT_NAME>"
         }
       }
     },
@@ -79,17 +79,17 @@
         "operation": "append",
         "documentId": {
           "__rl": true,
-          "value": "<DOCUMENT_ID>",
+          "value": "<GOOGLE_SHEET_LOG_ID>",
           "mode": "list",
           "cachedResultName": "Workflow Logs",
-          "cachedResultUrl": ""
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/<GOOGLE_SHEET_LOG_ID>/edit?usp=drivesdk"
         },
         "sheetName": {
           "__rl": true,
           "value": "gid=0",
           "mode": "list",
           "cachedResultName": "Sheet1",
-          "cachedResultUrl": ""
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/<GOOGLE_SHEET_LOG_ID>/edit#gid=0"
         },
         "columns": {
           "mappingMode": "defineBelow",
@@ -139,44 +139,44 @@
       "type": "n8n-nodes-base.googleSheets",
       "typeVersion": 4.6,
       "position": [
-        0,
+        16,
         -160
       ],
-      "id": "6c7a1484-bc5c-402a-9106-bb9fbb4672ba",
+      "id": "<NODE_ID_5>",
       "name": "Add Error to Logs",
       "credentials": {
         "googleSheetsOAuth2Api": {
-          "id": "<CREDENTIAL_ID>",
-          "name": ""
+          "id": "<YOUR_GOOGLE_SHEETS_API_ID>",
+          "name": "Google Sheets account"
         }
       }
     },
     {
       "parameters": {
         "authentication": "webhook",
-        "content": "=Error: {{ $workflow.name }} did not run. Please observe the logs. \n\nhttps://docs.google.com/spreadsheets/d/<DOCUMENT_ID>/edit?gid=0#gid=0",
+        "content": "=Error: {{ $workflow.name }} did not run. Please observe the logs. \n\nhttps://docs.google.com/spreadsheets/d/<GOOGLE_SHEET_LOG_ID>/edit?gid=0#gid=0",
         "options": {}
       },
       "type": "n8n-nodes-base.discord",
       "typeVersion": 2,
       "position": [
-        192,
+        224,
         -160
       ],
-      "id": "5ecd9751-f95f-4712-992d-863a316cfe7a",
+      "id": "<NODE_ID_6>",
       "name": "Send Error Alert",
-      "webhookId": "<WEBHOOK_ID>",
+      "webhookId": "<DISCORD_WEBHOOK_ID_1>",
       "credentials": {
         "discordWebhookApi": {
-          "id": "<CREDENTIAL_ID>",
-          "name": ""
+          "id": "<YOUR_DISCORD_WEBHOOK_API_ID_1>",
+          "name": "<YOUR_DISCORD_WEBHOOK_NAME_1>"
         }
       }
     },
     {
       "parameters": {
         "authentication": "webhook",
-        "content": "=Your daily X post for [Your Company Name]\n\n{{ $('Generate X Post').item.json.output.text }}\n\nThe following will be posted to X:\n\n{{ $('Generate X Post').item.json.output.post }}",
+        "content": "=Your daily X post for <YOUR_COMPANY_NAME>\n\n{{ $('AI Agent').item.json.output.text }}\n\nThe following will be posted to X:\n\n{{ $('AI Agent').item.json.output.post }}",
         "options": {
           "wait": true
         }
@@ -184,91 +184,16 @@
       "type": "n8n-nodes-base.discord",
       "typeVersion": 2,
       "position": [
-        192,
-        -336
+        224,
+        -320
       ],
-      "id": "d6f5189b-d227-4c70-9663-e4795691f1a9",
+      "id": "<NODE_ID_7>",
       "name": "Send Post Notification",
-      "webhookId": "<WEBHOOK_ID>",
+      "webhookId": "<DISCORD_WEBHOOK_ID_2>",
       "credentials": {
         "discordWebhookApi": {
-          "id": "<CREDENTIAL_ID>",
-          "name": ""
-        }
-      }
-    },
-    {
-      "parameters": {
-        "operation": "append",
-        "documentId": {
-          "__rl": true,
-          "value": "<DOCUMENT_ID>",
-          "mode": "list",
-          "cachedResultName": "Workflow Logs",
-          "cachedResultUrl": ""
-        },
-        "sheetName": {
-          "__rl": true,
-          "value": "gid=0",
-          "mode": "list",
-          "cachedResultName": "Sheet1",
-          "cachedResultUrl": ""
-        },
-        "columns": {
-          "mappingMode": "defineBelow",
-          "value": {
-            "Timestamp:": "={{ $now.format('yyyy-MM-dd hh:m a') }}",
-            "Workflow:": "={{ $workflow.name }}",
-            "Output:": "=Success: {{ $execution.id }}"
-          },
-          "matchingColumns": [],
-          "schema": [
-            {
-              "id": "Timestamp:",
-              "displayName": "Timestamp:",
-              "required": false,
-              "defaultMatch": false,
-              "display": true,
-              "type": "string",
-              "canBeUsedToMatch": true
-            },
-            {
-              "id": "Workflow:",
-              "displayName": "Workflow:",
-              "required": false,
-              "defaultMatch": false,
-              "display": true,
-              "type": "string",
-              "canBeUsedToMatch": true
-            },
-            {
-              "id": "Output:",
-              "displayName": "Output:",
-              "required": false,
-              "defaultMatch": false,
-              "display": true,
-              "type": "string",
-              "canBeUsedToMatch": true,
-              "removed": false
-            }
-          ],
-          "attemptToConvertTypes": false,
-          "convertFieldsToString": false
-        },
-        "options": {}
-      },
-      "type": "n8n-nodes-base.googleSheets",
-      "typeVersion": 4.6,
-      "position": [
-        0,
-        -336
-      ],
-      "id": "2e498703-7d38-43ac-a834-d8f2d1ba2f51",
-      "name": "Add Success to Logs",
-      "credentials": {
-        "googleSheetsOAuth2Api": {
-          "id": "<CREDENTIAL_ID>",
-          "name": ""
+          "id": "<YOUR_DISCORD_WEBHOOK_API_ID_2>",
+          "name": "<YOUR_DISCORD_WEBHOOK_NAME_2>"
         }
       }
     },
@@ -285,7 +210,7 @@
         -432
       ],
       "typeVersion": 1,
-      "id": "c0c71e0f-fe41-48d4-ad95-283b3fb57f7c",
+      "id": "<NODE_ID_8>",
       "name": "Sticky Note"
     },
     {
@@ -301,7 +226,7 @@
         -432
       ],
       "typeVersion": 1,
-      "id": "16d13e8f-5cec-4c9c-a36d-75ecc3b9635e",
+      "id": "<NODE_ID_9>",
       "name": "Sticky Note1"
     },
     {
@@ -316,14 +241,14 @@
         -432
       ],
       "typeVersion": 1,
-      "id": "0ca4d9c0-8649-4980-a510-6fedcf8ce76e",
+      "id": "<NODE_ID_10>",
       "name": "Sticky Note2"
     },
     {
       "parameters": {
         "content": "## Logging Data\nAdd the success or error of the workflow in the workflow logs.",
         "height": 496,
-        "width": 480,
+        "width": 528,
         "color": 6
       },
       "type": "n8n-nodes-base.stickyNote",
@@ -332,7 +257,7 @@
         -432
       ],
       "typeVersion": 1,
-      "id": "8bed2ef9-1d6a-4f43-992d-22d115d49c14",
+      "id": "<NODE_ID_11>",
       "name": "Sticky Note3"
     },
     {
@@ -347,47 +272,132 @@
         -608
       ],
       "typeVersion": 1,
-      "id": "bec180a4-c5eb-457f-aa15-089dcd01eda6",
+      "id": "<NODE_ID_12>",
       "name": "Sticky Note4"
-    },
-    {
-      "parameters": {},
-      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
-      "typeVersion": 1.3,
-      "position": [
-        -656,
-        -16
-      ],
-      "id": "c4499fb2-2a84-4dde-93fe-5c641bcf8d2c",
-      "name": "Simple Memory"
-    },
-    {
-      "parameters": {},
-      "type": "@n8n/n8n-nodes-langchain.toolThink",
-      "typeVersion": 1.1,
-      "position": [
-        -544,
-        -16
-      ],
-      "id": "737f617c-2de5-4bab-9d78-83fe681b8085",
-      "name": "Think"
     },
     {
       "parameters": {
         "promptType": "define",
-        "text": "You are a social media manager for [Your Company Name], a software company that provides:\n\nWeb Development services (scalable, modern websites, with optional AI integration).\n\nAI Automation workflows & AI agents (helping businesses save time, cut costs, and increase productivity).\n\nYour task is to generate engaging X (Twitter) posts that highlight topics related to:\n\n[Your Company Name]’s services\n\nAI, AI agents, and AI automation\n\nProductivity, efficiency, and problem-solving in business\n\nPosting Guidelines\n\nTone & Voice:\n\nConversational, professional, and approachable\n\nGenuinely curious and thoughtful — not pushy or salesy\n\nAvoid hype, buzzwords, and exaggerated claims\n\nStyle (Problem-Centric & Hypothesis-Driven):\n\nLead with a problem or challenge that businesses often face (in web dev, AI adoption, productivity, etc.)\n\nCurious framing: show genuine interest in the reader’s perspective (avoid one-way broadcasting)\n\nHypothesis-driven: frame insights as if testing an assumption (e.g., “We often see teams struggle with X — is that something you’ve run into?”).\n\nFormat & Constraints:\n\nEach post should fit within X’s character limits (≤ 280 characters) and no more than 3 sentences, keep them brief.\n\nUse plain language (not overly technical unless targeting devs)\n\nAvoid hashtags unless highly relevant\n\nEmojis may be used sparingly for emphasis or tone (optional)\n\nOutput:\n\nGenerate 1 post idea per request\n\nPosts should connect business problems → potential solutions → how [Your Company Name] or AI could help\n\nThe post should feel like it invites a response or sparks curiosity. Tighten the language for quick scanability (X rewards brevity). Frame the question more directly so people feel invited to answer.\n\nDo not repeat posts.",
+        "text": "You are a social media manager for <YOUR_COMPANY_NAME>, a software company that provides:\n\nWeb Development services (scalable, modern websites, with optional AI integration)\n\nAI Automation workflows & AI agents (helping businesses save time, cut costs, and increase productivity)\n\nAn attached Google Sheets tool provides a list of past posts and topics already used.\n\nBefore generating a new post, check the sheet and ensure your response does not repeat or closely copy any rows that already exist.\n\nTreat the sheet as a memory of what has been published.\n\nYour Task\n\nGenerate engaging X (Twitter) posts that highlight topics related to:\n\n<YOUR_COMPANY_NAME>’s services\n\nAI, AI agents, and AI automation\n\nProductivity, efficiency, and problem-solving in business\n\nPosting Guidelines\n\nTone & Voice:\n\nConversational, professional, approachable\n\nGenuinely curious and thoughtful — not pushy or salesy\n\nAvoid hype, buzzwords, exaggerated claims\n\nStyle (Problem-Centric & Hypothesis-Driven):\n\nLead with a problem or challenge that businesses often face (web dev, AI adoption, productivity, etc.)\n\nUse curious framing: show genuine interest in the reader’s perspective\n\nHypothesis-driven: frame insights as if testing an assumption (e.g., “We often see teams struggle with X — is that something you’ve run into?”)\n\nFormat & Constraints:\n\n≤ 280 characters, max 3 sentences\n\nPlain language (not overly technical unless targeting devs)\n\nAvoid hashtags unless highly relevant\n\nEmojis optional and sparing\n\nOutput\n\nGenerate 1 new post idea per request\n\nReference the sheet to avoid repeating past content\n\nPosts should connect business problems → potential solutions → how <YOUR_COMPANY_NAME> or AI could help\n\nInvite engagement: spark curiosity or ask a direct question\n\nKeep language tight for quick readability",
         "hasOutputParser": true,
         "options": {}
       },
       "type": "@n8n/n8n-nodes-langchain.agent",
       "typeVersion": 2.1,
       "position": [
-        -704,
+        -688,
+        -304
+      ],
+      "id": "<NODE_ID_13>",
+      "name": "AI Agent",
+      "alwaysOutputData": true,
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "<GOOGLE_SHEET_HISTORY_ID>",
+          "mode": "list",
+          "cachedResultName": "Posts History",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/<GOOGLE_SHEET_HISTORY_ID>/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/<GOOGLE_SHEET_HISTORY_ID>/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Tweet": "={{ $json.text }}"
+          },
+          "matchingColumns": [
+            "Tweet"
+          ],
+          "schema": [
+            {
+              "id": "Tweet",
+              "displayName": "Tweet",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.6,
+      "position": [
+        16,
         -320
       ],
-      "id": "7beb12c2-00c7-41bd-b2c3-428dd4ce5ae2",
-      "name": "Generate X Post",
-      "onError": "continueErrorOutput"
+      "id": "<NODE_ID_14>",
+      "name": "Update Post History",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "<YOUR_GOOGLE_SHEETS_API_ID>",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "<GOOGLE_SHEET_HISTORY_ID>",
+          "mode": "list",
+          "cachedResultName": "Posts History",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/<GOOGLE_SHEET_HISTORY_ID>/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/<GOOGLE_SHEET_HISTORY_ID>/edit#gid=0"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTool",
+      "typeVersion": 4.6,
+      "position": [
+        -592,
+        -96
+      ],
+      "id": "<NODE_ID_15>",
+      "name": "Check History",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "<YOUR_GOOGLE_SHEETS_API_ID>",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "## Setup Instructions \n\nThis is what you will need to get started:\n\n1. Set your Gemini API key in the chat model node, or replace it with another of your liking and authenticate with it.\n\n2. Get your client ID and client secret from your X developer dashboard:\n\nhttps://developer.x.com/en/portal/dashboard\n\nGo to \"Project and Apps,\" then select your app, then under \"Authentication,\" select \"Setup.\"\n\n3. Create a channel in Discord and then in the channel settings, go to \"Integrations\", \"Webhooks\", then \"New Webhook.\" Copy the URL and paste it in the Discord node.\n\n4. Authenticate with your Google account for sheets. The authentication settings should update on their own to yours by double clicking the node",
+        "height": 528,
+        "width": 464,
+        "color": 2
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -1504,
+        -432
+      ],
+      "typeVersion": 1,
+      "id": "<NODE_ID_16>",
+      "name": "Sticky Note5"
     }
   ],
   "pinData": {},
@@ -396,7 +406,7 @@
       "main": [
         [
           {
-            "node": "Generate X Post",
+            "node": "AI Agent",
             "type": "main",
             "index": 0
           }
@@ -407,7 +417,7 @@
       "ai_outputParser": [
         [
           {
-            "node": "Generate X Post",
+            "node": "AI Agent",
             "type": "ai_outputParser",
             "index": 0
           }
@@ -418,7 +428,7 @@
       "ai_languageModel": [
         [
           {
-            "node": "Generate X Post",
+            "node": "AI Agent",
             "type": "ai_languageModel",
             "index": 0
           }
@@ -429,7 +439,7 @@
       "main": [
         [
           {
-            "node": "Add Success to Logs",
+            "node": "Update Post History",
             "type": "main",
             "index": 0
           }
@@ -452,40 +462,7 @@
         []
       ]
     },
-    "Add Success to Logs": {
-      "main": [
-        [
-          {
-            "node": "Send Post Notification",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Simple Memory": {
-      "ai_memory": [
-        [
-          {
-            "node": "Generate X Post",
-            "type": "ai_memory",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Think": {
-      "ai_tool": [
-        [
-          {
-            "node": "Generate X Post",
-            "type": "ai_tool",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Generate X Post": {
+    "AI Agent": {
       "main": [
         [
           {
@@ -502,19 +479,41 @@
           }
         ]
       ]
+    },
+    "Update Post History": {
+      "main": [
+        [
+          {
+            "node": "Send Post Notification",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check History": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
     }
   },
   "active": true,
   "settings": {
     "executionOrder": "v1",
-    "timezone": "America/Chicago",
+    "timezone": "<YOUR_TIMEZONE>",
     "callerPolicy": "workflowsFromSameOwner"
   },
-  "versionId": "54741249-c336-4c90-9168-35867592fee6",
+  "versionId": "<VERSION_ID>",
   "meta": {
     "templateCredsSetupCompleted": true,
     "instanceId": "<INSTANCE_ID>"
   },
-  "id": "5bLssWzAIsAoR2a1",
+  "id": "<WORKFLOW_ID>",
   "tags": []
 }
