@@ -17,6 +17,7 @@ If you have any questions. Feel free to reach out on my socials.
 - [Daily Notion Briefing](#daily-notion-briefing)
 - [CRM Lead Capture](#crm-lead-capture)
 - [X Post Generator](#x-post-generator)
+- [BlueSky Post Automation](#bluesky-post-automation)
 
 ## Notion Daily Briefing
 
