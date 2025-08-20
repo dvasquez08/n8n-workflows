@@ -1,0 +1,376 @@
+{
+  "name": "BlueSky Post",
+  "nodes": [
+    {
+      "parameters": {
+        "url": "https://bsky.social/xrpc/com.atproto.identity.resolveHandle",
+        "jsonParameters": true,
+        "options": {},
+        "headerParametersJson": "={\"Authorization\": \"Bearer YOUR_BEARER_TOKEN\"}",
+        "queryParametersJson": "={\"handle\": \"YOUR_BLUE_SKY_HANDLE\"}"
+      },
+      "name": "Fetch DID",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 1,
+      "position": [
+        0,
+        -64
+      ],
+      "id": "5302b97e-7626-450d-bc2f-848ae706f84f"
+    },
+    {
+      "parameters": {
+        "requestMethod": "POST",
+        "url": "https://bsky.social/xrpc/com.atproto.repo.createRecord",
+        "jsonParameters": true,
+        "options": {},
+        "bodyParametersJson": "={\n  \"repo\": \"{{ $json.did }}\",\n  \"collection\": \"app.bsky.feed.post\",\n  \"record\": {\n    \"text\": \"{{ $('AI Agent').item.json.output }}\",\n    \"createdAt\": \"{{$now}}\"\n  }\n}",
+        "headerParametersJson": "={\n  \"Content-Type\": \"application/json\",\n  \"Authorization\": \"Bearer YOUR_BEARER_TOKEN\"\n}"
+      },
+      "name": "Post to BlueSky",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 1,
+      "position": [
+        192,
+        -64
+      ],
+      "id": "ad37499d-efa3-437a-934f-d481c98dcea7"
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "triggerAtHour": 7
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -736,
+        -64
+      ],
+      "id": "85c59fe3-7eaa-4e03-8a8e-d88fb81fb44d",
+      "name": "Schedule Trigger"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "You are a social media manager for Davtek, a software company that builds:\n\nWeb development services (scalable, modern websites, with optional AI integration)\n\nAI automation workflows & AI agents (helping businesses save time, cut costs, and increase productivity)\n\nAn attached Google Sheets tool provides a list of past posts and questions already used.\nBefore generating a new post, check the sheet and ensure your response does not repeat or closely copy any rows that already exist.\nTreat the sheet as a memory of what has been published.\n\nYour Task\n\nGenerate one engaging “Question of the Day” post for BlueSky that:\n\nAsks the audience about automation, AI agents, or productivity improvements\n\nInvites personal reflection (likes, dislikes, frustrations, or ideas for improvement)\n\nSparks curiosity and conversation\n\nPosting Guidelines\n\nTone & Voice:\n\nConversational, approachable, thoughtful\n\nCurious, not promotional — focus on learning from the audience\n\nAvoid jargon, hype, or exaggerated claims\n\nFormat & Constraints:\n\n≤ 280 characters, max 2 sentences\n\nAlways phrased as a question (open-ended, not yes/no)\n\nPlain language (not overly technical)\n\nNo hashtags unless highly relevant\n\nEmojis optional and sparing\n\nGoogle Sheets Memory Check:\nAn attached Google Sheets tool contains a record of all past posts/questions.\nBefore generating a new question, review the sheet and ensure your response does not repeat, rephrase too closely, or overlap with any entries already in the sheet.\nAlways treat the sheet as your memory of what has been published.\n\nOutput\n\nGenerate 1 new “Question of the Day” post per request.\nReference the sheet to avoid repeating past questions.\nThe question should encourage engagement and provide insight into how people view automation and AI in their work or daily life.",
+        "hasOutputParser": true,
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2.1,
+      "position": [
+        -416,
+        -64
+      ],
+      "id": "05af3cee-7952-4ff1-a77f-1d8a250215f7",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-2.5-pro",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        -416,
+        144
+      ],
+      "id": "b4254cc2-72e1-4296-b10c-7d2cb84bfbaa",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "YOUR_GOOGLE_GEMINI_CREDENTIAL_ID",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "YOUR_GOOGLE_SHEET_ID",
+          "mode": "list",
+          "cachedResultName": "BlueSky Post History",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/YOUR_GOOGLE_SHEET_ID/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/YOUR_GOOGLE_SHEET_ID/edit#gid=0"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTool",
+      "typeVersion": 4.6,
+      "position": [
+        -272,
+        144
+      ],
+      "id": "07b300be-2da9-441d-ad77-d0f51131941a",
+      "name": "Check Post History",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "YOUR_GOOGLE_SHEETS_CREDENTIAL_ID",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "YOUR_GOOGLE_SHEET_ID",
+          "mode": "list",
+          "cachedResultName": "BlueSky Post History",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/YOUR_GOOGLE_SHEET_ID/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/YOUR_GOOGLE_SHEET_ID/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Posts": "={{ $('AI Agent').item.json.output }}"
+          },
+          "matchingColumns": [
+            "Posts"
+          ],
+          "schema": [
+            {
+              "id": "Posts",
+              "displayName": "Posts",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.6,
+      "position": [
+        432,
+        -64
+      ],
+      "id": "5066d885-974f-4c64-ab02-47b670651548",
+      "name": "Update Post History",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "YOUR_GOOGLE_SHEETS_CREDENTIAL_ID",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "webhook",
+        "content": "=Here is your daily question of the day posted to BlueSky:\n\n {{ $json.Posts }}\n\nHave a nice day!",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.discord",
+      "typeVersion": 2,
+      "position": [
+        608,
+        -64
+      ],
+      "id": "b44ad42b-2d67-44e9-8e8e-65a034b33ac7",
+      "name": "Post Notification",
+      "webhookId": "YOUR_DISCORD_WEBHOOK_ID",
+      "credentials": {
+        "discordWebhookApi": {
+          "id": "YOUR_DISCORD_CREDENTIAL_ID",
+          "name": "Your Discord Credential Name"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "## Logging \nThe output is saved in a Google sheet to update the post history. A notification is sent to Discord.",
+        "height": 368,
+        "width": 400,
+        "color": 6
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        368,
+        -192
+      ],
+      "typeVersion": 1,
+      "id": "dfc78a83-217a-4a33-a9f1-bc6b24d8c479",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "content": "## Post to BlueSky \nThe user's DID is obtained from BlueSky, and then it posts the AI Agent's output to that profile.",
+        "height": 368,
+        "width": 384,
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -48,
+        -192
+      ],
+      "typeVersion": 1,
+      "id": "fe0c574d-2a10-44c2-8cf4-3c38f966ca8c",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "content": "## Generate The Test \nThis is the engine of the workflow. The AI Agent creates a question of the day, referencing the post history to ensure posts are not repeated.",
+        "height": 496,
+        "width": 384,
+        "color": 3
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -464,
+        -192
+      ],
+      "typeVersion": 1,
+      "id": "77ef42c0-ef89-4c65-913c-3631b3f221d1",
+      "name": "Sticky Note2"
+    },
+    {
+      "parameters": {
+        "content": "## Daily Trigger \nWorkflow is triggered once every morning",
+        "height": 288,
+        "width": 352,
+        "color": 4
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -848,
+        -192
+      ],
+      "typeVersion": 1,
+      "id": "75558380-8feb-43c8-8e2e-881352bb4d5d",
+      "name": "Sticky Note3"
+    },
+    {
+      "parameters": {
+        "content": "# Automated BlueSky Posting Workflow",
+        "width": 560
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -224,
+        -384
+      ],
+      "typeVersion": 1,
+      "id": "81b21d6e-a8d6-4342-b58f-9c78f88a0d48",
+      "name": "Sticky Note4"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Fetch DID": {
+      "main": [
+        [
+          {
+            "node": "Post to BlueSky",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Fetch DID",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Post to BlueSky": {
+      "main": [
+        [
+          {
+            "node": "Update Post History",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check Post History": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update Post History": {
+      "main": [
+        [
+          {
+            "node": "Post Notification",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "11649313-787c-4764-bbe3-925b3520dd95",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "YOUR_N8N_INSTANCE_ID"
+  },
+  "id": "YOUR_WORKFLOW_ID",
+  "tags": []
+}
