@@ -17,6 +17,7 @@ If you have any questions. Feel free to reach out on my socials.
 - [Daily Notion Briefing](#daily-notion-briefing)
 - [CRM Lead Capture](#crm-lead-capture)
 - [X Post Generator](#x-post-generator)
+- [BlueSky Post Automation](#bluesky-post-automation)
 
 ## Notion Daily Briefing
 
@@ -43,3 +44,11 @@ Don't have enough time in your day to think of what to post on X, then post regu
 The scheudle trigger is set to 3 days, feel free to change that to your liking. It activates the AI Agent. This AI Agent, using Gemini 2.5 Pro (which can be replaced with whatever you want), will first check a Google Sheet which contains the post history to avoid repeating posts or sounding too repetitive. After that, it writes a post talking about Davtek, it's services and how to sound like. Make sure to replace that but keep the step where you ask the agent to reference the Google sheet for the post history.
 
 After that, it goes to the X node where it posts the text it generated, followed by a Sheet node where the same text is logged for keeping history (the same sheet used in the tool for the AI Agent). Finally, it updates you via Dicord that a post has been written on your X account. If it fails, it logs the errors in a log Sheet, then sends you the error via Discord.
+
+## BlueSky Post Automation
+
+![BlueSkyAuto](https://github.com/user-attachments/assets/fbaae88f-ad0f-4d12-bf67-63cfcc12d4a3)
+
+Much like the X post generator, this workflow does the same thing, but with BlueSky. n8n does not have a official BlueSky node, but that's not a big deal. You just need a couple of HTTP nodes, one to get your user ID, and the one after that to post the text output from the AI, to Bluesky. This one is scheduled every monrning. The AI Agent does checks for the Google Sheet docs for the post history, then it writes a question of the day, which is passes to the HTTP nodes and then it gets posted to BlueSky. It will then update the Google Sheets for the post history and send its notification to Discord.
+
+
