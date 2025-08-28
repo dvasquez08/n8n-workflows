@@ -51,4 +51,6 @@ After that, it goes to the X node where it posts the text it generated, followed
 
 Much like the X post generator, this workflow does the same thing, but with BlueSky. n8n does not have a official BlueSky node, but that's not a big deal. You just need a couple of HTTP nodes, one to get your user ID, and the one after that to post the text output from the AI, to Bluesky. This one is scheduled every monrning. The AI Agent does checks for the Google Sheet docs for the post history, then it writes a question of the day, which is passes to the HTTP nodes and then it gets posted to BlueSky. It will then update the Google Sheets for the post history and send its notification to Discord.
 
+![url-uptime-logging](https://github.com/user-attachments/assets/899b776d-8519-4e2f-acaf-77bfe4baea4b)
+
 
