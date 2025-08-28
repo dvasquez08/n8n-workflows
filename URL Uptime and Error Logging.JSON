@@ -1,0 +1,536 @@
+{
+  "name": "URL Status Workflow",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "triggerAtHour": 7
+            }
+          ]
+        }
+      },
+      "id": "854cb3ff-c76a-4aeb-9ebf-44662e0a137d",
+      "name": "Schedule Trigger",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "position": [
+        -656,
+        448
+      ],
+      "typeVersion": 1.2
+    },
+    {
+      "parameters": {
+        "mode": "raw",
+        "jsonOutput": "{\n  \"urls\": {\n    \"URL 1\": \"example.com\",\n    \"URL 2\": \"your-domain.net\",\n    \"URL 3\": \"test-site.dev\",\n    \"URL 4\": \"another-one.org\",\n    \"URL 5\": \"your-main-site.io\",\n    \"URL 6\": \"your-app.app\"\n  }\n}",
+        "options": {}
+      },
+      "id": "5d6dd773-5cf0-4691-b0d1-3ec37416874e",
+      "name": "URLs",
+      "type": "n8n-nodes-base.set",
+      "position": [
+        -400,
+        448
+      ],
+      "typeVersion": 3.4
+    },
+    {
+      "parameters": {
+        "executeOnce": false,
+        "command": "=ping -c 5 {{ $json.urls }}"
+      },
+      "type": "n8n-nodes-base.executeCommand",
+      "typeVersion": 1,
+      "position": [
+        176,
+        464
+      ],
+      "id": "37c466bd-e256-4b93-9886-45f91f97da64",
+      "name": "Execute Command",
+      "alwaysOutputData": true,
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "options": {
+          "reset": false
+        }
+      },
+      "id": "d98db191-f4b9-4aef-a172-40f33aad1f34",
+      "name": "Loop URLs",
+      "type": "n8n-nodes-base.splitInBatches",
+      "position": [
+        -48,
+        448
+      ],
+      "typeVersion": 3
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "urls",
+        "include": "allOtherFields",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        -256,
+        448
+      ],
+      "id": "02ab7edd-b570-442a-bfe0-91a65c7faec7",
+      "name": "Split Out"
+    },
+    {
+      "parameters": {
+        "toRecipients": "your-email@example.com",
+        "subject": "Daily Reports",
+        "bodyContent": "=Good morning, the following websites are reporting online:\n\n{{ $json.Successful }}\n\nThe following Websites showed errors, please investigate:\n\n{{ $json.Failures }}",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.microsoftOutlook",
+      "typeVersion": 2,
+      "position": [
+        480,
+        192
+      ],
+      "id": "8ed5adcc-9fa4-4a68-bac4-088bfa07a07c",
+      "name": "Send a message",
+      "webhookId": "YOUR_WEBHOOK_ID",
+      "notesInFlow": false,
+      "credentials": {
+        "microsoftOutlookOAuth2Api": {
+          "id": "YOUR_OUTLOOK_CREDENTIAL_ID",
+          "name": "Microsoft Outlook account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "YOUR_GOOGLE_SHEET_ID",
+          "mode": "list",
+          "cachedResultName": "Logs",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/YOUR_GOOGLE_SHEET_ID/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Output",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/YOUR_GOOGLE_SHEET_ID/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Successful": "={{ $json.stdout.split('\\n')[0].split(' ')[1] }}",
+            "Timestamp": "={{ $now.toFormat('MM-dd-yyyy hh:mm a') }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Successful",
+              "displayName": "Successful",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Timestamp",
+              "displayName": "Timestamp",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        368,
+        448
+      ],
+      "id": "afab5bfe-6be7-45ec-bf34-d9776f14d916",
+      "name": "Success",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "YOUR_GOOGLE_SHEETS_CREDENTIAL_ID",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "YOUR_GOOGLE_SHEET_ID",
+          "mode": "list",
+          "cachedResultName": "Logs",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/YOUR_GOOGLE_SHEET_ID/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 521711326,
+          "mode": "list",
+          "cachedResultName": "Errors",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/YOUR_GOOGLE_SHEET_ID/edit#gid=521711326"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "URL": "={{ $json.urls }}",
+            "Error Message": "={{ $json.error }}",
+            "Timestamp": "={{ $now.toFormat('MM-dd-yyyy hh:mm a') }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "URL",
+              "displayName": "URL",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Error Message",
+              "displayName": "Error Message",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Timestamp",
+              "displayName": "Timestamp",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        368,
+        592
+      ],
+      "id": "ef10add8-498e-421c-b5a3-cd88a350953d",
+      "name": "Error",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "YOUR_GOOGLE_SHEETS_CREDENTIAL_ID",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        560,
+        576
+      ],
+      "id": "f9147391-d726-44d7-8099-ca6b820ccab1",
+      "name": "Merge"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "ab5c2a78-3cac-46a7-8cbb-e316489eff9f",
+              "name": "Failures",
+              "value": "={{ $('Loop URLs').all().filter(item => item.json.URL).map(item => item.json.URL).join('\\n') }}",
+              "type": "string"
+            },
+            {
+              "id": "ab6ab288-412d-4064-8733-a5cc74a7b2a5",
+              "name": "Successful",
+              "value": "={{ $('Loop URLs').all().filter(item => item.json.Successful).map(item => item.json.Successful).join('\\n') }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        320,
+        192
+      ],
+      "id": "ed164607-3231-4ec8-a0d7-cee8aadaaaf7",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "aggregate": "aggregateAllItemData",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.aggregate",
+      "typeVersion": 1,
+      "position": [
+        176,
+        192
+      ],
+      "id": "9596dc42-c49e-4b4e-9025-dfb477059e5a",
+      "name": "Aggregate"
+    },
+    {
+      "parameters": {
+        "content": "## Prepare URLs\nURLs are listed and split out",
+        "height": 272,
+        "width": 336,
+        "color": 6
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -464,
+        368
+      ],
+      "typeVersion": 1,
+      "id": "ea719d8f-243d-4cf8-a2b4-cc2a1b7df897",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "content": "## Ping the URLs and Log the Results \nA ping command is sent for each URL, the results of the output are logged in Google Sheets",
+        "height": 432,
+        "width": 720,
+        "color": 3
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        144,
+        368
+      ],
+      "typeVersion": 1,
+      "id": "e79c91a7-51db-41d4-a651-7021062a5c94",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "content": "## Group Results and Send Alert \nThe results are organized into two groups. One for the failures and one for the successful pings. The combined results are sent to an email address.",
+        "height": 256,
+        "width": 720,
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        144,
+        96
+      ],
+      "typeVersion": 1,
+      "id": "78d9ce03-8008-472b-b27a-ccd794e72bcd",
+      "name": "Sticky Note2"
+    },
+    {
+      "parameters": {
+        "content": "## Loop\nNode that loops through the URLs",
+        "height": 272,
+        "color": 4
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -112,
+        368
+      ],
+      "typeVersion": 1,
+      "id": "54093b98-29d8-4e30-8889-704d274992e3",
+      "name": "Sticky Note3"
+    },
+    {
+      "parameters": {
+        "content": "## Trigger \nWorkflow is executed every morning",
+        "height": 272,
+        "width": 256,
+        "color": 4
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -736,
+        368
+      ],
+      "typeVersion": 1,
+      "id": "11c8dd6d-e5dc-4b64-8472-7962b8e560d3",
+      "name": "Sticky Note4"
+    },
+    {
+      "parameters": {
+        "content": "## Automated URL Uptime & Error Logging Workflow",
+        "height": 96,
+        "width": 496,
+        "color": 7
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -560,
+        96
+      ],
+      "typeVersion": 1,
+      "id": "708b4039-ed7b-41b2-941f-374b6d530b8c",
+      "name": "Sticky Note5"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "URLs": {
+      "main": [
+        [
+          {
+            "node": "Split Out",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "URLs",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Execute Command": {
+      "main": [
+        [
+          {
+            "node": "Success",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Error",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop URLs": {
+      "main": [
+        [
+          {
+            "node": "Aggregate",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Execute Command",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Out": {
+      "main": [
+        [
+          {
+            "node": "Loop URLs",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Success": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Error": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Merge": {
+      "main": [
+        [
+          {
+            "node": "Loop URLs",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Aggregate": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "timezone": "America/Edmonton",
+    "callerPolicy": "workflowsFromSameOwner"
+  },
+  "versionId": "1a0b07c4-1fa4-480e-b23e-6658679b3eda",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "YOUR_INSTANCE_ID"
+  },
+  "id": "otTgSt0SbuiPPJEa",
+  "tags": []
+}
