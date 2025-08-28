@@ -18,6 +18,7 @@ If you have any questions. Feel free to reach out on my socials.
 - [CRM Lead Capture](#crm-lead-capture)
 - [X Post Generator](#x-post-generator)
 - [BlueSky Post Automation](#bluesky-post-automation)
+- [Automated URL Uptime and Error Logging](#automated-url-uptime-and-error-logging)
 
 ## Notion Daily Briefing
 
@@ -51,6 +52,8 @@ After that, it goes to the X node where it posts the text it generated, followed
 
 Much like the X post generator, this workflow does the same thing, but with BlueSky. n8n does not have a official BlueSky node, but that's not a big deal. You just need a couple of HTTP nodes, one to get your user ID, and the one after that to post the text output from the AI, to Bluesky. This one is scheduled every monrning. The AI Agent does checks for the Google Sheet docs for the post history, then it writes a question of the day, which is passes to the HTTP nodes and then it gets posted to BlueSky. It will then update the Google Sheets for the post history and send its notification to Discord.
 
+## Automated URL Uptime and Error Logging
+
+What this workflow will do is it will take a list of URLs or IP addresses, loop through them and ping each address. When they are successful, the results are logged into a Google Sheet. If there are errors, it is also logged in a Google Sheet where it logs the errors. After that, the results are grouped into successful replies and failed replies. Each group of results are sent to an email for reporting. You can use this to check the uptime of networking equipment, servers, printers, website, etc.
+
 ![url-uptime-logging](https://github.com/user-attachments/assets/899b776d-8519-4e2f-acaf-77bfe4baea4b)
-
-
