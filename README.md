@@ -19,6 +19,7 @@ If you have any questions. Feel free to reach out on my socials.
 - [X Post Generator](#x-post-generator)
 - [BlueSky Post Automation](#bluesky-post-automation)
 - [Automated URL Uptime and Error Logging](#automated-url-uptime-and-error-logging)
+- [YouTube Video Upload Automation](#youtube-video-upload-automation)
 
 ## Notion Daily Briefing
 
@@ -57,3 +58,9 @@ Much like the X post generator, this workflow does the same thing, but with Blue
 What this workflow will do is it will take a list of URLs or IP addresses, loop through them and ping each address. When they are successful, the results are logged into a Google Sheet. If there are errors, it is also logged in a Google Sheet where it logs the errors. After that, the results are grouped into successful replies and failed replies. Each group of results are sent to an email for reporting. You can use this to check the uptime of networking equipment, servers, printers, website, etc.
 
 ![url-uptime-logging](https://github.com/user-attachments/assets/899b776d-8519-4e2f-acaf-77bfe4baea4b)
+
+## YouTube Video Upload Automation
+
+This one was one of my favorites to build. It's a hands-free automation where an AI agent thinks of a prompt to send to Veo 3, creates an appropriate title and description, then passes that information on. The prompt is sent to Veo 3 where it is then combined with the title and description. All information is sent to the YouTube node where it is uploaded to a YouTube channel. The last step is a notification on Discord, letting me know that the video was uploaded.
+
+One thing to keep in mind. Is that if you want to change the aspect ratio, this breaks the Gemini node, but you can easily change it on the YouTube mobile app. This is also very expensive. Approximately $6 per video. I signed up for free credits up to $400 dollars, so this will be good for a while, but keep that in mind. Third party video generators such as Wavespeed AI come to about the same.
