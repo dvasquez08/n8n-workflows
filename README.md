@@ -2,7 +2,7 @@
 
 Here, you will see a list of the JSON files for the workflows that I share out. These should be plug-and-play to get you going right away but of course, you can modify them to your liking so they fit your needs.
 
-If you would like to implement automation into your business to solve any problems or improve efficiency, feel free to reach out to info@davtek.io for any business inquiries.
+If you would like to implement automation into your business to solve any problems or improve efficiency, feel free to reach out to me at dvasquez@davtek.io for any business inquiries.
 
 ## What You Will Find Here
 
