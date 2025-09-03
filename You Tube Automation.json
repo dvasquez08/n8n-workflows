@@ -1,0 +1,504 @@
+{
+  "name": "YouTube Automation",
+  "nodes": [
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Role & Goal:\nYou are an expert ASMR video prompt writer for Google Veo 3 and a master content creator. Your job is to generate a comprehensive output that includes an extremely detailed video prompt, a catchy video title, and a very brief video description.\n\nInstructions:\nBefore you begin, select a random object, ingredient, or creative subject from a wide variety—including fruits, vegetables, cheeses, bread, butter, unusual objects, and even abstract/creative items like planets or cosmic objects—and write a complete Veo 3 prompt about slicing, cutting, or revealing it.\n\nOnce you have a subject, you must first check a Google Doc to ensure the subject has not been used before.\n\nProcess Flow:\n\nUse the Google Doc tool called Check Prompt Document to see if you have used the object before.\n\nIf the subject is found in the document, you must think of a new idea and go back to step 1.\n\nIf the subject is not found, then proceed with the following steps.\n\nWrite the Veo 3 prompt that includes:\n\nOpening Description – Hyper-detailed visuals of the object.\n\nAction Details – Describe the slicing, cutting, or revealing action.\n\nSensory Emphasis – Focus on sound, texture, and visual appeal.\n\nCinematography Style – Specify camera angles, lighting, and ensure the video is a vertical shot with a 9:16 aspect ratio.\n\nPacing – Calm, deliberate, and rhythmic.\n\nFinal Shot – How the sliced pieces appear.\n\nStyle Keywords – Descriptive tags like: photorealistic, cinematic, macro detail, ASMR vibes, etc.\n\nGenerate a concise, catchy title and a very brief, simple one-sentence description for the video.\n\nCombine all three pieces of information (prompt, title, and description) into a single JSON object.\n\nSend the final JSON object to the Structured Output Parser.\n\nFinally, use the Update Prompts Document tool to add the new subject to the document so it won't be used again.\n\nOutput Requirements:\n\nAlways write the Veo 3 prompt in one continuous, polished paragraph.\n\nThe final output must be a single JSON object with three fields: prompt, title, and description.\n\nThe description field must be very brief (e.g., 50 words or less).",
+        "hasOutputParser": true,
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2.2,
+      "position": [
+        -96,
+        -64
+      ],
+      "id": "f4ee9f7a-b6ad-4849-a066-411e63a340cc",
+      "name": "AI Agent",
+      "retryOnFail": true,
+      "maxTries": 3,
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "schemaType": "manual",
+        "inputSchema": "{\n\t\"type\": \"object\",\n\t\"properties\": {\n\t\t\"title\": {\n\t\t\t\"type\": \"string\"\n\t\t},\n\t\t\"description\": {\n\t\t\t\"type\": \"string\"\n\t\t},\n      \"prompt\": {\n\t\t\t\"type\": \"string\"\n\t\t}\n\t}\n}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.3,
+      "position": [
+        96,
+        144
+      ],
+      "id": "e1094847-631b-4f51-a756-eaafef6b00e9",
+      "name": "Structured Output Parser"
+    },
+    {
+      "parameters": {
+        "resource": "video",
+        "operation": "upload",
+        "title": "={{ $json.title }}",
+        "regionCode": "CA",
+        "categoryId": "24",
+        "options": {
+          "description": "={{ $json.description }}",
+          "privacyStatus": "public",
+          "publicStatsViewable": true,
+          "selfDeclaredMadeForKids": false,
+          "tags": ""
+        }
+      },
+      "type": "n8n-nodes-base.youTube",
+      "typeVersion": 1,
+      "position": [
+        896,
+        48
+      ],
+      "id": "e0ec1046-c14a-45b8-8f8a-7da4c03f78d7",
+      "name": "Upload a video",
+      "credentials": {
+        "youTubeOAuth2Api": {
+          "id": "YOUR_YOUTUBE_OAUTH_ID",
+          "name": "YouTube account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        -144,
+        160
+      ],
+      "id": "9466226f-f830-4a45-8f77-4d02cc8ac4ae",
+      "name": "Gemini 2.5 Flash",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "YOUR_GEMINI_API_KEY_ID",
+          "name": "Second Gemini Key"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentURL": "YOUR_GOOGLE_DOC_URL",
+        "actionsUi": {
+          "actionFields": [
+            {
+              "action": "insert",
+              "text": "=Prompt for:\n\n{{ $now.toFormat('MM-dd-yyyy hh:mm a') }}\n\nPrompt:\n\n{{ $('AI Agent').item.json.output.prompt }}\n\n==="
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.googleDocs",
+      "typeVersion": 2,
+      "position": [
+        1072,
+        48
+      ],
+      "id": "35909844-a945-4067-8494-fafc84aeb4d1",
+      "name": "Update Prompts Document",
+      "credentials": {
+        "googleDocsOAuth2Api": {
+          "id": "YOUR_GOOGLE_DOCS_OAUTH_ID",
+          "name": "YOUR_EMAIL_ADDRESS"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "documentURL": "YOUR_GOOGLE_DOC_URL"
+      },
+      "type": "n8n-nodes-base.googleDocsTool",
+      "typeVersion": 2,
+      "position": [
+        -16,
+        192
+      ],
+      "id": "068c7fea-8f3e-4877-ac8a-0643228bfdbf",
+      "name": "Check Prompts Document",
+      "credentials": {
+        "googleDocsOAuth2Api": {
+          "id": "YOUR_GOOGLE_DOCS_OAUTH_ID",
+          "name": "YOUR_EMAIL_ADDRESS"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "4718679e-b68f-4adb-a171-717783d8ed69",
+              "name": "title",
+              "value": "={{ $json.output.title }}",
+              "type": "string"
+            },
+            {
+              "id": "955eacf1-9ebc-4372-9229-1f65764a9d74",
+              "name": "description",
+              "value": "={{ $json.output.description }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        400,
+        64
+      ],
+      "id": "3e02cf39-ab0f-4127-be3b-33361d387294",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "combineBy": "combineByPosition",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        624,
+        48
+      ],
+      "id": "a9e4c4d3-8c9d-4a8d-8f1b-760b8ec2d71a",
+      "name": "Merge"
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "daysInterval": 3,
+              "triggerAtHour": 12
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -448,
+        -64
+      ],
+      "id": "2c4559e0-a8a6-4443-9a75-c8bc5618fd8e",
+      "name": "Schedule Trigger"
+    },
+    {
+      "parameters": {
+        "content": "## Trigger \nTo keep API costs reasonable, this is set to run every 3 days",
+        "height": 304,
+        "width": 320,
+        "color": 4
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -544,
+        -176
+      ],
+      "typeVersion": 1,
+      "id": "30ff1422-3c30-4fbd-be92-cf967291ac65",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "content": "## Create Video Data \nThe AI Agent thinks of what type of video to create, referencing the Google Doc for previous videos. It generates the video title, description, and prompt for the generate video node.",
+        "height": 608,
+        "width": 464,
+        "color": 3
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -208,
+        -176
+      ],
+      "typeVersion": 1,
+      "id": "8684d24a-13d3-4d70-85b8-807c51b72a4b",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "content": "## Combine Data \nOnce the title, description, video are generated, all three items are combined in preparation for video upload",
+        "height": 400,
+        "width": 512,
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        272,
+        -176
+      ],
+      "typeVersion": 1,
+      "id": "7211a191-9cc7-47e2-b6e6-f2d827422c54",
+      "name": "Sticky Note2"
+    },
+    {
+      "parameters": {
+        "content": "## Upload Video, Log Data \nThe video is uploaded, with the title and the description being added to the video. The prompt that was used for the video is saved in the same prompt document for future video generations.",
+        "height": 400,
+        "width": 640,
+        "color": 3
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        800,
+        -176
+      ],
+      "typeVersion": 1,
+      "id": "2c31fc14-9f0b-4216-b191-b96c35b1e2df",
+      "name": "Sticky Note3"
+    },
+    {
+      "parameters": {
+        "content": "# Faceless YouTube Channel Video Upload Automation\n",
+        "height": 128,
+        "width": 992,
+        "color": 7
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -208,
+        -368
+      ],
+      "typeVersion": 1,
+      "id": "3697745d-75b3-4286-ac2d-6d1a4a71853e",
+      "name": "Sticky Note4"
+    },
+    {
+      "parameters": {
+        "authentication": "webhook",
+        "content": "=The following video was successfully uploaded to the CleanCut ASMR channel:\n\n{{ $('Merge').item.json.title }}\n\nCheck it out here:\n\nhttps://www.youtube.com/@CleancutASMR-x4j/shorts",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.discord",
+      "typeVersion": 2,
+      "position": [
+        1264,
+        48
+      ],
+      "id": "f1b4c830-e047-4e57-b477-037e093c70e3",
+      "name": "Send Success Notification",
+      "webhookId": "ef2632b6-edbe-4457-a17d-84d7e48fa135",
+      "credentials": {
+        "discordWebhookApi": {
+          "id": "YOUR_DISCORD_WEBHOOK_ID",
+          "name": "Captain Catnip"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "## Error Handling\nIf there is an error, an alert is sent via Discord.",
+        "height": 256,
+        "width": 512,
+        "color": 6
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        272,
+        240
+      ],
+      "typeVersion": 1,
+      "id": "b58640e1-8636-4c1f-8a26-1bc614b1b74e",
+      "name": "Sticky Note5"
+    },
+    {
+      "parameters": {
+        "authentication": "webhook",
+        "content": "The YouTube automation workflow has run into an error.",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.discord",
+      "typeVersion": 2,
+      "position": [
+        336,
+        352
+      ],
+      "id": "9cba17e5-61de-4ee9-a485-7dbf493b3d94",
+      "name": "Send Error Alert",
+      "webhookId": "c323d6b1-d3cc-49f3-a5db-d02f09631c67",
+      "credentials": {
+        "discordWebhookApi": {
+          "id": "YOUR_DISCORD_WEBHOOK_ID",
+          "name": "Mr. Meow"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "video",
+        "modelId": {
+          "__rl": true,
+          "value": "models/veo-3.0-generate-preview",
+          "mode": "list",
+          "cachedResultName": "models/veo-3.0-generate-preview"
+        },
+        "prompt": "=Take this info: {{ $json.output.prompt }}, and generate the video with aspect ratio 9:16 so it can be uploaded for a YouTube short.",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.googleGemini",
+      "typeVersion": 1,
+      "position": [
+        400,
+        -80
+      ],
+      "id": "e0202e2c-c8c4-4d0c-a2ef-87bcfbd54325",
+      "name": "Generate a video",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "YOUR_API_KEY_ID",
+          "name": "CCA"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Structured Output Parser": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Generate a video",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Send Error Alert",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Gemini 2.5 Flash": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Upload a video": {
+      "main": [
+        [
+          {
+            "node": "Update Prompts Document",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check Prompts Document": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Merge": {
+      "main": [
+        [
+          {
+            "node": "Upload a video",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update Prompts Document": {
+      "main": [
+        [
+          {
+            "node": "Send Success Notification",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Generate a video": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "timezone": "America/Edmonton",
+    "callerPolicy": "workflowsFromSameOwner"
+  },
+  "versionId": "c855d1b9-cff2-44c8-aaa6-fc3d479ca69c",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "5d1532068cd59d0a505656debc1e996beb28cc747b2113028384dc732cb70630"
+  },
+  "id": "20Hym3qppv5HSdQv",
+  "tags": []
+}
