@@ -64,3 +64,7 @@ What this workflow will do is it will take a list of URLs or IP addresses, loop 
 This one was one of my favorites to build. It's a hands-free automation where an AI agent thinks of a prompt to send to Veo 3, creates an appropriate title and description, then passes that information on. The prompt is sent to Veo 3 where it is then combined with the title and description. All information is sent to the YouTube node where it is uploaded to a YouTube channel. The last step is a notification on Discord, letting me know that the video was uploaded.
 
 One thing to keep in mind. Is that if you want to change the aspect ratio, this breaks the Gemini node, but you can easily change it on the YouTube mobile app. This is also very expensive. Approximately $6 per video. I signed up for free credits up to $400 dollars, so this will be good for a while, but keep that in mind. Third party video generators such as Wavespeed AI come to about the same.
+
+![youtube-automation](https://github.com/user-attachments/assets/f9964cd5-e0a1-40b4-9958-8b1757842c16)
+
+
