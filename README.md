@@ -39,7 +39,7 @@ The trigger is a form submission, which then adds all the information into Hubsp
 
 ## X Post Generator
 
-![x auto generator](https://github.com/user-attachments/assets/bcdda0d7-20a1-422e-b4f9-441691d40092)
+![x-post-generator](https://github.com/user-attachments/assets/248c7734-2f97-42c1-9f01-0c77a9d31879)
 
 Don't have enough time in your day to think of what to post on X, then post regularly? This is what this workflow helps you with. It is scheduled to generate a post, then send it to your X account.
 
