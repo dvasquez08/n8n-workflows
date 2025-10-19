@@ -1,5 +1,5 @@
 {
-  "name": "My workflow 4",
+  "name": "X Post Automation Demo",
   "nodes": [
     {
       "parameters": {
@@ -10,11 +10,11 @@
       },
       "type": "n8n-nodes-base.stickyNote",
       "position": [
-        -1296,
-        -256
+        -1072,
+        240
       ],
       "typeVersion": 1,
-      "id": "9120f0cb-1b54-41a5-be5b-95bc302c373e",
+      "id": "a639d32a-d8d4-4956-a2ce-576c8a5fb207",
       "name": "Sticky Note5"
     },
     {
@@ -38,10 +38,10 @@
       "type": "n8n-nodes-base.googleSheetsTool",
       "typeVersion": 4.6,
       "position": [
-        -384,
-        96
+        -112,
+        608
       ],
-      "id": "c48c89a2-a363-442e-bd48-ebae48f0aecb",
+      "id": "f3ed021a-a3cf-4203-a9cd-afb86feba23f",
       "name": "Check History"
     },
     {
@@ -89,26 +89,25 @@
       "type": "n8n-nodes-base.googleSheets",
       "typeVersion": 4.6,
       "position": [
-        240,
-        -128
+        464,
+        368
       ],
-      "id": "9156e87a-b16a-4832-a147-4d06f1184838",
+      "id": "ba408671-fb1c-4d49-b8af-5d06f33b009c",
       "name": "Update Post History"
     },
     {
       "parameters": {
         "promptType": "define",
-        "text": "You are a social media manager for <YOUR_COMPANY_NAME>, a software company that provides:\n\nWeb Development services (scalable, modern websites, with optional AI integration)\n\nAI Automation workflows & AI agents (helping businesses save time, cut costs, and increase productivity)\n\nAn attached Google Sheets tool provides a list of past posts and topics already used.\n\nBefore generating a new post, check the sheet and ensure your response does not repeat or closely copy any rows that already exist.\n\nTreat the sheet as a memory of what has been published.\n\nYour Task\n\nGenerate engaging X (Twitter) posts that highlight topics related to:\n\n<YOUR_COMPANY_NAME>’s services\n\nAI, AI agents, and AI automation\n\nProductivity, efficiency, and problem-solving in business\n\nPosting Guidelines\n\nTone & Voice:\n\nConversational, professional, approachable\n\nGenuinely curious and thoughtful — not pushy or salesy\n\nAvoid hype, buzzwords, exaggerated claims\n\nStyle (Problem-Centric & Hypothesis-Driven):\n\nLead with a problem or challenge that businesses often face (web dev, AI adoption, productivity, etc.)\n\nUse curious framing: show genuine interest in the reader’s perspective\n\nHypothesis-driven: frame insights as if testing an assumption (e.g., “We often see teams struggle with X — is that something you’ve run into?”)\n\nFormat & Constraints:\n\n≤ 280 characters, max 3 sentences\n\nPlain language (not overly technical unless targeting devs)\n\nAvoid hashtags unless highly relevant\n\nEmojis optional and sparing\n\nOutput\n\nGenerate 1 new post idea per request\n\nReference the sheet to avoid repeating past content\n\nPosts should connect business problems → potential solutions → how <YOUR_COMPANY_NAME> or AI could help\n\nInvite engagement: spark curiosity or ask a direct question\n\nKeep language tight for quick readability",
-        "hasOutputParser": true,
+        "text": "<YOUR_POMPT_HERE>",
         "options": {}
       },
       "type": "@n8n/n8n-nodes-langchain.agent",
       "typeVersion": 2.1,
       "position": [
-        -480,
-        -128
+        -256,
+        368
       ],
-      "id": "a4fddd76-c118-459a-bde1-c4b90a39158d",
+      "id": "5476864f-9001-40e7-a635-bf658cd583df",
       "name": "AI Agent",
       "alwaysOutputData": true
     },
@@ -120,11 +119,11 @@
       },
       "type": "n8n-nodes-base.stickyNote",
       "position": [
-        -448,
-        -432
+        -224,
+        64
       ],
       "typeVersion": 1,
-      "id": "d5b8a1c8-7f0c-42d2-86e1-c960f029809d",
+      "id": "df23dae9-0ff7-40ed-a287-91383934001a",
       "name": "Sticky Note4"
     },
     {
@@ -136,11 +135,11 @@
       },
       "type": "n8n-nodes-base.stickyNote",
       "position": [
-        144,
-        -256
+        368,
+        240
       ],
       "typeVersion": 1,
-      "id": "0571bc2d-97c3-46ac-8616-76ad8c88e250",
+      "id": "73136250-5d93-459d-b267-d56eda81d1a3",
       "name": "Sticky Note3"
     },
     {
@@ -151,11 +150,11 @@
       },
       "type": "n8n-nodes-base.stickyNote",
       "position": [
-        -128,
-        -256
+        96,
+        240
       ],
       "typeVersion": 1,
-      "id": "9e42a395-ee52-4e94-8e1d-f3806d13879e",
+      "id": "14947cac-bdfc-4e41-959e-7073e9f5645e",
       "name": "Sticky Note2"
     },
     {
@@ -167,11 +166,11 @@
       },
       "type": "n8n-nodes-base.stickyNote",
       "position": [
-        -528,
-        -256
+        -304,
+        240
       ],
       "typeVersion": 1,
-      "id": "f0bf02a6-e1df-406b-8483-9a97ded94f87",
+      "id": "eafaf042-3ee7-4c04-961e-d98d3796af37",
       "name": "Sticky Note1"
     },
     {
@@ -183,11 +182,11 @@
       },
       "type": "n8n-nodes-base.stickyNote",
       "position": [
-        -816,
-        -256
+        -592,
+        240
       ],
       "typeVersion": 1,
-      "id": "0c5aa86d-3752-4083-bfbd-3b392df667aa",
+      "id": "e02323c7-71a8-496f-b76b-37e5ebcc7b43",
       "name": "Sticky Note"
     },
     {
@@ -201,10 +200,10 @@
       "type": "n8n-nodes-base.discord",
       "typeVersion": 2,
       "position": [
-        448,
-        -128
+        672,
+        368
       ],
-      "id": "0e7198c9-2bc1-4c99-acf3-70c056a07c15",
+      "id": "c1237163-8702-4be9-9ec2-cdb9b40d4b57",
       "name": "Send Post Notification",
       "webhookId": "<DISCORD_WEBHOOK_ID_2>"
     },
@@ -216,10 +215,10 @@
       "type": "n8n-nodes-base.twitter",
       "typeVersion": 2,
       "position": [
-        -48,
-        -128
+        176,
+        368
       ],
-      "id": "f9a64813-7bb4-4eab-a7ee-581b63929491",
+      "id": "81980477-fe9a-44ff-a1e2-da01dc392a6f",
       "name": "Post to X"
     },
     {
@@ -229,25 +228,11 @@
       "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
       "typeVersion": 1,
       "position": [
-        -496,
-        144
+        -256,
+        608
       ],
-      "id": "f2c81fee-af74-4315-b3c0-5d76ae0a6ef4",
+      "id": "4b1ce150-03b1-4fb6-a098-c535296b085a",
       "name": "Gemini 2.5 Pro"
-    },
-    {
-      "parameters": {
-        "schemaType": "manual",
-        "inputSchema": "{\n  \"type\": \"object\",\n  \"properties\": {\n    \"text\": {\n      \"type\": \"string\"\n    },\n    \"post\": {\n      \"type\": \"string\"\n    }\n  },\n  \"required\": [\"text\", \"post\"]\n}"
-      },
-      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
-      "typeVersion": 1.3,
-      "position": [
-        -272,
-        128
-      ],
-      "id": "7d672c71-ba38-44a8-8961-7011577f1f63",
-      "name": "Structured Output Parser"
     },
     {
       "parameters": {
@@ -263,10 +248,10 @@
       "type": "n8n-nodes-base.scheduleTrigger",
       "typeVersion": 1.2,
       "position": [
-        -736,
-        -128
+        -512,
+        368
       ],
-      "id": "7c4c9872-be53-4c4d-85d7-b6990d4d0635",
+      "id": "7d10e3f9-177c-4e0e-9c1e-b2dc5ed6f0d8",
       "name": "Schedule Trigger"
     }
   ],
@@ -291,8 +276,7 @@
             "type": "main",
             "index": 0
           }
-        ],
-        []
+        ]
       ]
     },
     "Update Post History": {
@@ -328,17 +312,6 @@
         ]
       ]
     },
-    "Structured Output Parser": {
-      "ai_outputParser": [
-        [
-          {
-            "node": "AI Agent",
-            "type": "ai_outputParser",
-            "index": 0
-          }
-        ]
-      ]
-    },
     "Schedule Trigger": {
       "main": [
         [
@@ -355,7 +328,7 @@
   "settings": {
     "executionOrder": "v1"
   },
-  "versionId": "5c73c851-8126-4799-b937-c9cd0b340a9c",
+  "versionId": "24a32a2b-20a5-4627-8f23-808cf14ab120",
   "meta": {
     "templateCredsSetupCompleted": true,
     "instanceId": "5d1532068cd59d0a505656debc1e996beb28cc747b2113028384dc732cb70630"
