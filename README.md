@@ -73,3 +73,7 @@ One thing to keep in mind. Is that if you want to change the aspect ratio, this 
 Being an IT Administrator, I know that often tiems there are steps that are missed when it comes to onboarding a new employee. Their user account is not created yet, their laptop hasn't been setup yet because the team that sets up the laptops had no idea the employee was starting, I've seen it all!
 
 This inspired me to do this automation in n8n. This is executed by a form submission. Once the form is submitted, it triggers the Entra ID nodes to create an account, add to any security groups, creates the uer in Jira and sends a welcome email. It also schedules an orientation meeting in their calendar with their new manager and sends a Teams message to a channel which can be the IT Team for example, letting them to know a new person has stated, and they will probably need a laptop. Give it a try, and hopefully you find it helpful!
+
+![azure-employee-onboarding](https://github.com/user-attachments/assets/66fb7443-ab67-47d6-a194-53bbc73d4eea)
+
+
