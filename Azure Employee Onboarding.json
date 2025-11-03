@@ -1,0 +1,418 @@
+{
+  "name": "Employee Onboarding",
+  "nodes": [
+    {
+      "parameters": {
+        "operation": "create",
+        "displayName": "={{ $json['First Name'] }} {{ $json['Last Name'] }}",
+        "userPrincipalName": "={{ $json.Username }}@<YOUR_DOMAIN>.com",
+        "mailNickname": "={{ $json.Username }}",
+        "password": "<YOUR_SECURE_PASSWORD>",
+        "additionalFields": {
+          "employeeId": "=\"{{ $json['Employee ID'] }}\""
+        },
+        "requestOptions": {}
+      },
+      "type": "n8n-nodes-base.microsoftEntra",
+      "typeVersion": 1,
+      "position": [
+        -272,
+        -64
+      ],
+      "id": "96aabf68-eabb-4c3e-8ea7-86fe5fb9025b",
+      "name": "Create user",
+      "credentials": {
+        "microsoftEntraOAuth2Api": {
+          "id": "",
+          "name": "Microsoft Entra ID (Azure Active Directory) account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "formTitle": "Employee Onboarding",
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": "First Name",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Last Name",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Username",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Manager Email",
+              "fieldType": "email",
+              "placeholder": "manager.name@<YOUR_DOMAIN>.com",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Department",
+              "fieldType": "dropdown",
+              "fieldOptions": {
+                "values": [
+                  {
+                    "option": "IT"
+                  },
+                  {
+                    "option": "Sales"
+                  },
+                  {
+                    "option": "Admin"
+                  }
+                ]
+              },
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Start Date",
+              "fieldType": "date",
+              "requiredField": true
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.formTrigger",
+      "typeVersion": 2.2,
+      "position": [
+        -608,
+        -64
+      ],
+      "id": "51780dd9-3baf-4f8a-b3ce-341dac38173d",
+      "name": "Employee Onboard Submission",
+      "webhookId": ""
+    },
+    {
+      "parameters": {
+        "operation": "addGroup",
+        "group": {
+          "__rl": true,
+          "value": "<YOUR_GROUP_ID>",
+          "mode": "list",
+          "cachedResultName": "<YOUR_GROUP_NAME>"
+        },
+        "user": {
+          "__rl": true,
+          "value": "={{ $json.id }}",
+          "mode": "id"
+        },
+        "requestOptions": {}
+      },
+      "type": "n8n-nodes-base.microsoftEntra",
+      "typeVersion": 1,
+      "position": [
+        -112,
+        -64
+      ],
+      "id": "2674abc9-3d7d-42f9-9a60-6b5f7f491763",
+      "name": "Add user to group",
+      "credentials": {
+        "microsoftEntraOAuth2Api": {
+          "id": "",
+          "name": "Microsoft Entra ID (Azure Active Directory) account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "toRecipients": "={{ $json.emailAddress }}",
+        "subject": "Welcome to <YOUR_COMPANY_NAME>!",
+        "bodyContent": "=Welcome, {{ $('Employee Onboard Submission').item.json['First Name'] }}!\n\nWe're happy to have you at <YOUR_COMPANY_NAME>, and excited to have you as part of our team. An employee orientation will be scheduled for you soon, stay tuned for details. \n\nIn the meantime, if you have any questions, please don't hesitate to reach out to your supervisor at {{ $('Employee Onboard Submission').item.json['Manager Email'] }}.\n\nLooking forward to working with you,\n\nThe <YOUR_COMPANY_NAME> Team",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.microsoftOutlook",
+      "typeVersion": 2,
+      "position": [
+        480,
+        -64
+      ],
+      "id": "2d961223-5a91-456e-916d-becc83e20961",
+      "name": "Send a message",
+      "webhookId": "",
+      "credentials": {
+        "microsoftOutlookOAuth2Api": {
+          "id": "",
+          "name": "<YOUR_SENDER_EMAIL_ACCOUNT>"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://<YOUR_ATLASSIAN_DOMAIN>.atlassian.net/rest/api/3/user",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "jiraSoftwareCloudApi",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"emailAddress\": \"{{ $('Create user').item.json.userPrincipalName }}\",\n  \"displayName\": \"{{ $('Create user').item.json.displayName }}\",\n  \"products\": [\n    \"jira-software\"\n  ]\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        192,
+        -64
+      ],
+      "id": "fffc6458-5522-47dc-b231-946d0da695c6",
+      "name": "Create Jira Account",
+      "credentials": {
+        "jiraSoftwareCloudApi": {
+          "id": "",
+          "name": "Jira SW Cloud account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "event",
+        "operation": "create",
+        "calendarId": {
+          "__rl": true,
+          "value": "<YOUR_CALENDAR_ID>",
+          "mode": "list",
+          "cachedResultName": "<YOUR_CALENDAR_NAME>"
+        },
+        "subject": "=New Employee Orientation with {{ $('Create user').item.json.displayName }}",
+        "startDateTime": "={{ $('Employee Onboard Submission').item.json['Start Date'] + 'T10:00:00' }}\n",
+        "endDateTime": "={{ $('Employee Onboard Submission').item.json['Start Date'] + 'T10:00:30' }}",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.microsoftOutlook",
+      "typeVersion": 2,
+      "position": [
+        656,
+        -64
+      ],
+      "id": "368f4593-4c18-4afb-a593-863bd28175a0",
+      "name": "Book Orientation",
+      "webhookId": "",
+      "credentials": {
+        "microsoftOutlookOAuth2Api": {
+          "id": "",
+          "name": "<YOUR_CALENDAR_EMAIL_ACCOUNT>"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "channelMessage",
+        "teamId": {
+          "__rl": true,
+          "value": "<YOUR_TEAM_ID>",
+          "mode": "list",
+          "cachedResultName": "<YOUR_TEAM_NAME>"
+        },
+        "channelId": {
+          "__rl": true,
+          "value": "<YOUR_CHANNEL_ID>",
+          "mode": "list",
+          "cachedResultName": "<YOUR_CHANNEL_NAME>",
+          "cachedResultUrl": "<YOUR_CHANNEL_URL>"
+        },
+        "message": "=User profile created for {{ $('Create user').item.json.displayName }}\n\nStart date: {{ $('Employee Onboard Submission').item.json['Start Date'] }}\n\nA Jira account has been created for {{ $('Employee Onboard Submission').item.json['First Name'] }}.\n\nNew Employee Orientation is scheduled on {{ DateTime.fromISO($json.start.dateTime).toFormat(\"MM-dd-yyyy HH:mm\") }}\n\nHave a nice day!",
+        "options": {
+          "includeLinkToWorkflow": false
+        }
+      },
+      "type": "n8n-nodes-base.microsoftTeams",
+      "typeVersion": 2,
+      "position": [
+        976,
+        -64
+      ],
+      "id": "ebdae226-1c96-4cd1-a87b-151d94a0ce51",
+      "name": "Alert Manager",
+      "webhookId": "",
+      "credentials": {
+        "microsoftTeamsOAuth2Api": {
+          "id": "",
+          "name": "Microsoft Teams account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "# New Employee Onboarding ",
+        "height": 96,
+        "width": 480,
+        "color": 3
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        0,
+        -368
+      ],
+      "typeVersion": 1,
+      "id": "810685b8-51ab-43d4-901c-01851c0b355d",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "content": "## Form Submission\nA form is submitted for the new employee, triggering the workflow",
+        "height": 336,
+        "width": 304,
+        "color": 4
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -704,
+        -208
+      ],
+      "typeVersion": 1,
+      "id": "fd67cf5f-3dc2-42e5-88d2-b80b4b818bc0",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "content": "## Microsoft Account Created \nA user account is created for the new employee and are added to a security group",
+        "height": 336,
+        "width": 352,
+        "color": 7
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -320,
+        -208
+      ],
+      "typeVersion": 1,
+      "id": "aa6a2ab2-2a44-4396-8b3b-982a69ab4977",
+      "name": "Sticky Note2"
+    },
+    {
+      "parameters": {
+        "content": "## Jira Account \nA Jira account is created for the employee",
+        "height": 336,
+        "width": 256,
+        "color": 4
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        112,
+        -208
+      ],
+      "typeVersion": 1,
+      "id": "bac4bd23-8ee7-40a9-b543-525fab9bae44",
+      "name": "Sticky Note3"
+    },
+    {
+      "parameters": {
+        "content": "## Schedule Orientation \nA welcome email is sent to the new employee's email. New Employee Orientation is booked",
+        "height": 336,
+        "width": 368,
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        432,
+        -208
+      ],
+      "typeVersion": 1,
+      "id": "a26f5ad8-82db-483b-a7ef-a7a6248fddb5",
+      "name": "Sticky Note4"
+    },
+    {
+      "parameters": {
+        "content": "## Alert Management \nA Teams message is sent to the Employee Onboarding channel. Providing the details of the new employee and the scheduled orientation",
+        "height": 336,
+        "width": 304,
+        "color": 6
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        880,
+        -208
+      ],
+      "typeVersion": 1,
+      "id": "bb09ac95-8a7a-49f4-9fd6-81e2325ff1d4",
+      "name": "Sticky Note5"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Employee Onboard Submission": {
+      "main": [
+        [
+          {
+            "node": "Create user",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create user": {
+      "main": [
+        [
+          {
+            "node": "Add user to group",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Add user to group": {
+      "main": [
+        [
+          {
+            "node": "Create Jira Account",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send a message": {
+      "main": [
+        [
+          {
+            "node": "Book Orientation",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create Jira Account": {
+      "main": [
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Book Orientation": {
+      "main": [
+        [
+          {
+            "node": "Alert Manager",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "timezone": "<YOUR_TIMEZONE>",
+    "callerPolicy": "workflowsFromSameOwner"
+  },
+  "versionId": "",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": ""
+  },
+  "id": "<WORKFLOW_ID>",
+  "tags": []
+}
