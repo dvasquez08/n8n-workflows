@@ -83,11 +83,15 @@ This section is composed of two parts, as I made two different versions of this 
 
 ### Telegram Trigger Version
 
+![Telegram Bot Social Media Workflow](https://github.com/user-attachments/assets/41a3a50e-8250-4496-b0be-f8db900e177f)
+
 The first one here, is the Telegram Social Media Manager. This allows you to post a single message, across multiple social media platforms. In this template, you can send a post to X, LinkedIn, and BlueSky at once with a single message to a Telegram bot, which executes the flow, sends its output to the social media platforms which make your post, using that message. It finally sends you a confirmation in your Telegram chat when it is complete.
 
 This is great for those who want to automate their social media, but with control. They can still decide exactly what they want to post with their own words, just across mulitple platforms at once, instead of logging into each app and posting it multiple times.
 
 ### AI Agent Version
+
+![Social Media AI Agent](https://github.com/user-attachments/assets/9adef872-7ecf-4727-bb60-1b081a4f4a30)
 
 This version accomplishes the same goal as the last workflow, it uses the exact same nodes with the same settings but the key difference is that it is using an AI Agent instead of a Telegram bot. Unlike the Telegram bot, the AI Agent decides what topic to post about by using it's RSS feed tool, and then decides what to say about that topic. Then, just like the Telegram bot, it sends its output to the social media nodes, posting the message all at once. This runs on a schedule so that it is fully autaomomous and hands free.
 
