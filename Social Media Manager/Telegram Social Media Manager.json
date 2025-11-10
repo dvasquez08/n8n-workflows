@@ -1,0 +1,392 @@
+{
+  "name": "Social Media Manager Telegram Trigger",
+  "nodes": [
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.linkedin.com/v2/ugcPosts",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "oAuth2Api",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n    \"author\": \"urn:li:person:{{ $json.sub }}\",\n    \"lifecycleState\": \"PUBLISHED\",\n    \"specificContent\": {\n        \"com.linkedin.ugc.ShareContent\": {\n            \"shareCommentary\": {\n                \"text\": \"{{ $('Telegram Trigger').item.json.message.text }}\"\n            },\n            \"shareMediaCategory\": \"NONE\"\n        }\n    },\n    \"visibility\": {\n        \"com.linkedin.ugc.MemberNetworkVisibility\": \"PUBLIC\"\n    }\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        480,
+        480
+      ],
+      "id": "12c518b6-f737-4182-a924-ac79cc4fdb9a",
+      "name": "Post to LinkedIn",
+      "credentials": {
+        "oAuth2Api": {
+          "id": "<YOUR_LINKEDIN_OAUTH_CREDENTIAL_ID>",
+          "name": "<YOUR_LINKEDIN_OAUTH_CREDENTIAL_NAME>"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "url": "https.api.linkedin.com/v2/userinfo",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "oAuth2Api",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        256,
+        480
+      ],
+      "id": "f0ff764a-71d6-432d-9ef6-a215a65b124a",
+      "name": "Get Person ID",
+      "credentials": {
+        "oAuth2Api": {
+          "id": "<YOUR_LINKEDIN_OAUTH_CREDENTIAL_ID>",
+          "name": "<YOUR_LINKEDIN_OAUTH_CREDENTIAL_NAME>"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "text": "={{ $json.message.text }}",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.twitter",
+      "typeVersion": 2,
+      "position": [
+        496,
+        240
+      ],
+      "id": "e6587084-c222-4818-9e84-acad47e9d78d",
+      "name": "Create Tweet",
+      "credentials": {
+        "twitterOAuth2Api": {
+          "id": "<YOUR_TWITTER_OAUTH_CREDENTIAL_ID>",
+          "name": "<YOUR_TWITTER_OAUTH_CREDENTIAL_NAME>"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https.bsky.social/xrpc/com.atproto.server.createSession",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "identifier",
+              "value": "<YOUR_BLUESKY_IDENTIFIER>"
+            },
+            {
+              "name": "password",
+              "value": "<YOUR_BLUESKY_PASSWORD>"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        256,
+        -32
+      ],
+      "id": "59dd2a7d-c840-47f0-a960-57599a075fb6",
+      "name": "Create Session"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https.bsky.social/xrpc/com.atproto.repo.createRecord",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "=Bearer {{ $item(\"0\").$node[\"Create Session\"].json[\"accessJwt\"] }}"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"repo\": \"{{ $json.did }}\",\n  \"collection\": \"app.bsky.feed.post\",\n  \"record\": {\n    \"text\": \"{{ $('Telegram Trigger').item.json.message.text }}\",\n    \"createdAt\": \"{{$now}}\"\n  }\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        480,
+        -32
+      ],
+      "id": "c786c6ba-01f2-43c4-90b2-29de32fbd1ec",
+      "name": "Submit Post"
+    },
+    {
+      "parameters": {
+        "content": "# Social Media Telegram Bot Workflow",
+        "height": 128,
+        "width": 416,
+        "color": 3
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -336,
+        -96
+      ],
+      "typeVersion": 1,
+      "id": "cbb58c6a-0ef1-4f30-9cab-dc2f4a8a02f5",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "updates": [
+          "message"
+        ],
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegramTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -192,
+        240
+      ],
+      "id": "91be34f5-ceea-456b-b933-e3e6d9aa48d8",
+      "name": "Telegram Trigger",
+      "webhookId": "<YOUR_TELEGRAM_WEBHOOK_ID>",
+      "credentials": {
+        "telegramApi": {
+          "id": "<YOUR_TELEGRAM_API_CREDENTIAL_ID>",
+          "name": "<YOUR_TELEGRAM_API_CREDENTIAL_NAME>"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "## Send Message to LinkedIn \n",
+        "height": 224,
+        "width": 496,
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        176,
+        432
+      ],
+      "typeVersion": 1,
+      "id": "7c20d3eb-5a0c-4856-a159-6e3e783c95ca",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "content": "## Send Message to X",
+        "height": 224,
+        "width": 256,
+        "color": 7
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        416,
+        176
+      ],
+      "typeVersion": 1,
+      "id": "7fe0ffe6-c51e-4cc8-b895-97ff6c1f6d60",
+      "name": "Sticky Note2"
+    },
+    {
+      "parameters": {
+        "content": "## Send Message to Blue Sky",
+        "height": 240,
+        "width": 496,
+        "color": 6
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        176,
+        -96
+      ],
+      "typeVersion": 1,
+      "id": "a7040163-facf-43ec-8794-d7d3fe05c336",
+      "name": "Sticky Note3"
+    },
+    {
+      "parameters": {
+        "content": "## Enter Text to Post\n\nThis is the trigger that will send off the post entered into Telegram across all social media platforms\n",
+        "height": 336,
+        "width": 416,
+        "color": 4
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -336,
+        64
+      ],
+      "typeVersion": 1,
+      "id": "ece3265b-b95e-46bd-af82-94593382e25f",
+      "name": "Sticky Note4"
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Telegram Trigger').item.json.message.chat.id }}",
+        "text": "=Your text has been posted successfully",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        1120,
+        224
+      ],
+      "id": "e70f3039-3782-47cc-ac7a-245bd0d5d899",
+      "name": "Send a text message",
+      "webhookId": "<YOUR_TELEGRAM_WEBHOOK_ID>",
+      "credentials": {
+        "telegramApi": {
+          "id": "<YOUR_TELEGRAM_API_CREDENTIAL_ID>",
+          "name": "<YOUR_TELEGRAM_API_CREDENTIAL_NAME>"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "## Post Confirmation \n\nA confirmation reply is sent via Telegram, confirming that the post was successful.",
+        "height": 336,
+        "width": 624,
+        "color": 4
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        752,
+        64
+      ],
+      "typeVersion": 1,
+      "id": "b40f5d8c-dac5-476a-9657-3cb8f3771714",
+      "name": "Sticky Note5"
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "combineBy": "combineAll",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        896,
+        224
+      ],
+      "id": "da3043bb-2937-4ee3-b4a5-88922d5c003a",
+      "name": "Merge"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Get Person ID": {
+      "main": [
+        [
+          {
+            "node": "Post to LinkedIn",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create Tweet": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Post to LinkedIn": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Create Session": {
+      "main": [
+        [
+          {
+            "node": "Submit Post",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Submit Post": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Telegram Trigger": {
+      "main": [
+        [
+          {
+            "node": "Create Session",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Create Tweet",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Get Person ID",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send a text message": {
+      "main": [
+        []
+      ]
+    },
+    "Merge": {
+      "main": [
+        [
+          {
+            "node": "Send a text message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "7b03d442-0a57-4d78-9df1-25b28d79b25a",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": ""
+  },
+  "id": "iKdeY9wAu4sPjokH",
+  "tags": []
+}
