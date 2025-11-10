@@ -1,0 +1,573 @@
+{
+  "name": "Social Media Manager AI Agent",
+  "nodes": [
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.linkedin.com/v2/ugcPosts",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "oAuth2Api",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n    \"author\": \"urn:li:person:{{ $json.sub }}\",\n    \"lifecycleState\": \"PUBLISHED\",\n    \"specificContent\": {\n        \"com.linkedin.ugc.ShareContent\": {\n            \"shareCommentary\": {\n                \"text\": \"{{ $('Social Media Manager').item.json.output }}\"\n            },\n            \"shareMediaCategory\": \"NONE\"\n        }\n    },\n    \"visibility\": {\n        \"com.linkedin.ugc.MemberNetworkVisibility\": \"PUBLIC\"\n    }\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        912,
+        400
+      ],
+      "id": "20fdda45-25e6-432b-9b9b-b40b0622b006",
+      "name": "Post to LinkedIn",
+      "credentials": {
+        "oAuth2Api": {
+          "id": "<YOUR_LINKEDIN_OAUTH_CREDENTIAL_ID>",
+          "name": "<YOUR_LINKEDIN_OAUTH_CREDENTIAL_NAME>"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "url": "https://api.linkedin.com/v2/userinfo",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "oAuth2Api",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        688,
+        400
+      ],
+      "id": "7e6f8387-4056-450b-9c1a-1f6c034727a4",
+      "name": "Get Person ID",
+      "credentials": {
+        "oAuth2Api": {
+          "id": "<YOUR_LINKEDIN_OAUTH_CREDENTIAL_ID>",
+          "name": "<YOUR_LINKEDIN_OAUTH_CREDENTIAL_NAME>"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "text": "={{ $json.output }}",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.twitter",
+      "typeVersion": 2,
+      "position": [
+        912,
+        240
+      ],
+      "id": "0a371f8d-a332-4aff-8a0d-b6abee0fd00c",
+      "name": "Create Tweet",
+      "credentials": {
+        "twitterOAuth2Api": {
+          "id": "<YOUR_TWITTER_OAUTH_CREDENTIAL_ID>",
+          "name": "<YOUR_TWITTER_OAUTH_CREDENTIAL_NAME>"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://bsky.social/xrpc/com.atproto.server.createSession",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "identifier",
+              "value": "<YOUR_BLUESKY_IDENTIFIER>"
+            },
+            {
+              "name": "password",
+              "value": "<YOUR_BLUESKY_PASSWORD>"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        688,
+        80
+      ],
+      "id": "1ec7f19a-df38-4567-ad87-60dd689ab94a",
+      "name": "Create Session"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://bsky.social/xrpc/com.atproto.repo.createRecord",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "=Bearer {{ $item(\"0\").$node[\"Create Session\"].json[\"accessJwt\"] }}"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"repo\": \"{{ $json.did }}\",\n  \"collection\": \"app.bsky.feed.post\",\n  \"record\": {\n    \"text\": \"{{ $('Social Media Manager').item.json.output }}\",\n    \"createdAt\": \"{{$now}}\"\n  }\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        912,
+        80
+      ],
+      "id": "cf1c287d-4d4a-4de8-8e6e-4f09bc104b19",
+      "name": "Submit Post"
+    },
+    {
+      "parameters": {
+        "content": "# Social Media AI Agent",
+        "height": 128,
+        "width": 432,
+        "color": 7
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        112,
+        -80
+      ],
+      "typeVersion": 1,
+      "id": "b334b46a-b90e-4ef8-93a8-e9f1ac00dbae",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {}
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -96,
+        240
+      ],
+      "id": "dcc8a480-a950-4d3d-b54d-5d007da8ce82",
+      "name": "Schedule Trigger"
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "combineBy": "combineAll",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        1248,
+        256
+      ],
+      "id": "774dd3db-a7d4-4530-b2be-b162e31c6f6d",
+      "name": "Merge"
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "<YOUR_GOOGLE_SHEET_ID>",
+          "mode": "list",
+          "cachedResultName": "Post History Log",
+          "cachedResultUrl": ""
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "Sheet1",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": ""
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Posts": "={{ $('Social Media Manager').item.json.output }}"
+          },
+          "matchingColumns": [
+            "Posts"
+          ],
+          "schema": [
+            {
+              "id": "Posts",
+              "displayName": "Posts",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        1424,
+        256
+      ],
+      "id": "66bd6264-8342-4627-a332-2b915501528f",
+      "name": "Update Post History Log",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "<YOUR_GOOGLE_OAUTH_CREDENTIAL_ID>",
+          "name": "<YOUR_GOOGLE_OAUTH_CREDENTIAL_NAME>"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "<YOUR_GOOGLE_SHEET_ID>",
+          "mode": "list",
+          "cachedResultName": "Post History Log",
+          "cachedResultUrl": ""
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "Sheet1",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": ""
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTool",
+      "typeVersion": 4.7,
+      "position": [
+        384,
+        512
+      ],
+      "id": "cc2ef081-63d0-4424-8d70-b84919d80407",
+      "name": "Check Post History Log",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "<YOUR_GOOGLE_OAUTH_CREDENTIAL_ID>",
+          "name": "<YOUR_GOOGLE_OAUTH_CREDENTIAL_NAME>"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=System / Instruction Prompt:\n\nYou are Your Company’s Official AI Social Media Manager.\nYour job is to generate a short, engaging, and conversational post about AI and automation, all relevant to Your Company’s work.\n\nAbout Your Company\n\nYour Company builds AI-powered automation solutions that help businesses work smarter — including:\n\nCustom AI agents for admin, sales, and customer support\n\nAutomated workflows using n8n\n\nAI-enhanced websites and integrations\n\nKeep the focus on innovation, time savings, and practical impact — not hype.\n\nUse These Tools\n\nRSS Feed Tool — use it to gather the latest news about AI, automation, and n8n.\n\nGoogle Sheets Node (Post History Log) — check recent posts to avoid repeating topics, hashtags, or structures.\n\nOutput Rules\n\nOutput only the post, avoid jargon, hype, or exaggerated claims.\n\n \nTone guide:\n\nauthentic, conversational, community-driven, thought provoking. ≤ 280 characters total (strict limit)",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2.2,
+      "position": [
+        208,
+        240
+      ],
+      "id": "40e44ca7-c626-4037-8229-04c0117072c9",
+      "name": "Social Media Manager"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        -48,
+        512
+      ],
+      "id": "c173dc84-0713-493d-bb6f-76c93beb46ac",
+      "name": "Gemini 2.5 Flash",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "<YOUR_GOOGLE_GEMINI_API_CREDENTIAL_ID>",
+          "name": "<YOUR_GOOGLE_GEMINI_API_CREDENTIAL_NAME>"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "toolDescription": "Read data from the RSS Feed",
+        "url": "https://www.reddit.com/r/automate/.rss",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.rssFeedReadTool",
+      "typeVersion": 1.2,
+      "position": [
+        192,
+        512
+      ],
+      "id": "aa3b38cb-8d70-4f97-916e-a8f09e307342",
+      "name": "Check RSS Read"
+    },
+    {
+      "parameters": {
+        "authentication": "webhook",
+        "content": "A post has but submitted to your social media accounts! ",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.discord",
+      "typeVersion": 2,
+      "position": [
+        1600,
+        256
+      ],
+      "id": "19643182-c19d-4ba2-91ea-2c53f2d9758d",
+      "name": "Notify on Discord",
+      "webhookId": "<YOUR_DISCORD_WEBHOOK_ID>",
+      "credentials": {
+        "discordWebhookApi": {
+          "id": "<YOUR_DISCORD_WEBHOOK_CREDENTIAL_ID>",
+          "name": "<YOUR_DISCORD_WEBHOOK_CREDENTIAL_NAME>"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "## Trigger\nThe workflow is executed on a specified schedule",
+        "height": 288,
+        "width": 256,
+        "color": 4
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -176,
+        128
+      ],
+      "typeVersion": 1,
+      "id": "e07df161-69bb-4ba5-b83a-0320b7915d4f",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "content": "## Social Media Agent\nUsing Gemini 2.5 Flash as it's LLM model, the AI agent uses it's tools to get inspiration for the post, and reference post history to not repeat a post.",
+        "height": 288,
+        "width": 432,
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        112,
+        128
+      ],
+      "typeVersion": 1,
+      "id": "e44a37a3-6977-477f-9d50-545345988d61",
+      "name": "Sticky Note2"
+    },
+    {
+      "parameters": {
+        "content": "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n## Tools\nThe RSS Feed node uses an RSS Feed from a subreddit. The Google Sheets is where post history is logged for reference",
+        "height": 304,
+        "width": 432,
+        "color": 3
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        112,
+        448
+      ],
+      "typeVersion": 1,
+      "id": "6c39e867-a319-45bd-85d6-605371539645",
+      "name": "Sticky Note3"
+    },
+    {
+      "parameters": {
+        "content": "## Post to Socials \nOnce the AI Agent has created it's post, it sends the output to all three social media accounts. X, BlueSky and LinkedIn receive the output and post it to the specified account.",
+        "height": 688,
+        "width": 464,
+        "color": 6
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        576,
+        -80
+      ],
+      "typeVersion": 1,
+      "id": "4f3a50f5-5178-4944-9e0f-7d05b155da10",
+      "name": "Sticky Note4"
+    },
+    {
+      "parameters": {
+        "content": "## Update Log / Confirm Completion\nAfter the text has been posted to all three social media accounts, the output is merged to avoid multiple outputs. The post history is updated for future reference and a notification is sent via Discord.",
+        "height": 288,
+        "width": 640,
+        "color": 4
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        1200,
+        128
+      ],
+      "typeVersion": 1,
+      "id": "04791e5c-7454-493d-b025-9a6a5783ec85",
+      "name": "Sticky Note5"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Get Person ID": {
+      "main": [
+        [
+          {
+            "node": "Post to LinkedIn",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create Tweet": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Post to LinkedIn": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create Session": {
+      "main": [
+        [
+          {
+            "node": "Submit Post",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Submit Post": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "Social Media Manager",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge": {
+      "main": [
+        [
+          {
+            "node": "Update Post History Log",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update Post History Log": {
+      "main": [
+        [
+          {
+            "node": "Notify on Discord",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check Post History Log": {
+      "ai_tool": [
+        [
+          {
+            "node": "Social Media Manager",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Social Media Manager": {
+      "main": [
+        [
+          {
+            "node": "Create Tweet",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Create Session",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Get Person ID",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Gemini 2.5 Flash": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Social Media Manager",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check RSS Read": {
+      "ai_tool": [
+        [
+          {
+            "node": "Social Media Manager",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "ad274338-e6e5-4696-9371-edb3d2acf841",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": ""
+  },
+  "id": "qtJU7MY1FG0z4Kzp",
+  "tags": []
+}

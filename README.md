@@ -74,3 +74,23 @@ One thing to keep in mind. Is that if you want to change the aspect ratio, this 
 Being an IT Administrator, I know that often tiems there are steps that are missed when it comes to onboarding a new employee. Their user account is not created yet, their laptop hasn't been setup yet because the team that sets up the laptops had no idea the employee was starting, I've seen it all!
 
 This inspired me to do this automation in n8n. This is executed by a form submission. Once the form is submitted, it triggers the Entra ID nodes to create an account, add to any security groups, creates the uer in Jira and sends a welcome email. It also schedules an orientation meeting in their calendar with their new manager and sends a Teams message to a channel which can be the IT Team for example, letting them to know a new person has stated, and they will probably need a laptop. Give it a try, and hopefully you find it helpful!
+
+![azure-employee-onboarding](https://github.com/user-attachments/assets/66fb7443-ab67-47d6-a194-53bbc73d4eea)
+
+## Social Media Manager (Text-Only)
+
+This section is composed of two parts, as I made two different versions of this workflow.
+
+### Telegram Trigger Version
+
+The first one here, is the Telegram Social Media Manager. This allows you to post a single message, across multiple social media platforms. In this template, you can send a post to X, LinkedIn, and BlueSky at once with a single message to a Telegram bot, which executes the flow, sends its output to the social media platforms which make your post, using that message. It finally sends you a confirmation in your Telegram chat when it is complete.
+
+This is great for those who want to automate their social media, but with control. They can still decide exactly what they want to post with their own words, just across mulitple platforms at once, instead of logging into each app and posting it multiple times.
+
+### AI Agent Version
+
+This version accomplishes the same goal as the last workflow, it uses the exact same nodes with the same settings but the key difference is that it is using an AI Agent instead of a Telegram bot. Unlike the Telegram bot, the AI Agent decides what topic to post about by using it's RSS feed tool, and then decides what to say about that topic. Then, just like the Telegram bot, it sends its output to the social media nodes, posting the message all at once. This runs on a schedule so that it is fully autaomomous and hands free.
+
+This is great for those who struggle to find ideas of what to post and how to say their message, or simply do not want to take the time to log into each platform, think of what to say and post a message there. The AI Agent can completely handle the idea creation, the text for the post, then sends it to the rest of the workflow.
+
+You can have a hybrid setup where you use both of these at once. You can have the AI Agent post 1 or 3 times a week, then you can post on other days of the week so you maintain authenticity, and some control of what is on your socials.
