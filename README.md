@@ -101,8 +101,14 @@ You can have a hybrid setup where you use both of these at once. You can have th
 
 ### Multi-Agent AI Assistant
 
+![multi-agent workflow - parent agent](https://github.com/user-attachments/assets/6f634281-5c9e-4946-96de-e23708af7ea9)
+
 This is a workflow that uses multiple AI Agents. Each agent has its own workflow and one AI agent acts as the parent agent which takes all queries from the user via Telegram using a Telegram bot. The parent agent has two tools which are the child workflows that are called upon depending on the task given to the parent agent. Each sub-workflow''s agent has specific tools and a specialty that is called if they are needed for the task.
 
 The first sub-workflow is a calendar agent. Whenever anything calendar related needs to be done such as, "check my events for this date," or "please create an event for this date," this tool will be called and the sub-workflow's agent will call it's Google calendar tools in order to complete this task.
 
+![multi-agent-workflow - calendar agent](https://github.com/user-attachments/assets/c1539c71-5bd3-4c65-914c-01c2df46c28f)
+
 The second sub-workflow is a Notion agent. This workflow is called when anything Notion related is being requested such as, "please get me the pages for my Notion database," or "Add this page to my Notion database."
+
+![multi-agent workflow - notion agent](https://github.com/user-attachments/assets/843c2369-e634-4df7-a810-950b018896b1)
