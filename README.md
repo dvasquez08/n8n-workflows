@@ -98,3 +98,11 @@ This version accomplishes the same goal as the last workflow, it uses the exact 
 This is great for those who struggle to find ideas of what to post and how to say their message, or simply do not want to take the time to log into each platform, think of what to say and post a message there. The AI Agent can completely handle the idea creation, the text for the post, then sends it to the rest of the workflow.
 
 You can have a hybrid setup where you use both of these at once. You can have the AI Agent post 1 or 3 times a week, then you can post on other days of the week so you maintain authenticity, and some control of what is on your socials.
+
+### Multi-Agent AI Assistant
+
+This is a workflow that uses multiple AI Agents. Each agent has its own workflow and one AI agent acts as the parent agent which takes all queries from the user via Telegram using a Telegram bot. The parent agent has two tools which are the child workflows that are called upon depending on the task given to the parent agent. Each sub-workflow''s agent has specific tools and a specialty that is called if they are needed for the task.
+
+The first sub-workflow is a calendar agent. Whenever anything calendar related needs to be done such as, "check my events for this date," or "please create an event for this date," this tool will be called and the sub-workflow's agent will call it's Google calendar tools in order to complete this task.
+
+The second sub-workflow is a Notion agent. This workflow is called when anything Notion related is being requested such as, "please get me the pages for my Notion database," or "Add this page to my Notion database."
