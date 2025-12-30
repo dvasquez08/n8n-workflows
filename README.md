@@ -10,7 +10,9 @@ I'll do a quick overview of each workflow below, a screenshot of what it looks l
 
 If you have any questions. Feel free to reach out on my socials.
 
-[X](https://x.com/Dave53v) | [Instagram](https://www.instagram.com/david.vasq1/) | [YouTube](https://www.youtube.com/@davtekio) | [Personal Website](https://dvasquez.net)
+[X](https://x.com/Dave53v) | [Instagram](https://www.instagram.com/david.vasq1/) | [YouTube](https://www.youtube.com/@davtekio) | [Davtek Website](https://davtek.io)
+
+For business inquiries: dvasquez@davtek.io
 
 ## Table of Contents
 
@@ -22,6 +24,7 @@ If you have any questions. Feel free to reach out on my socials.
 - [YouTube Video Upload Automation](#youtube-video-upload-automation)
 - [Azure Employee Onboarding](#azure-employee-onboarding)
 - [Social Media Manager Text Only](#social-media-manager-text-only)
+- [Multi-Agent AI Assistant](#multi-agent-ai-assistant)
 
 ## Notion Daily Briefing
 
