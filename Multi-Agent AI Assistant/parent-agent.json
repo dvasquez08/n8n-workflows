@@ -11,10 +11,10 @@
       "type": "n8n-nodes-base.telegramTrigger",
       "typeVersion": 1.2,
       "position": [
-        -64,
-        240
+        560,
+        -112
       ],
-      "id": "2df357d3-5414-4b2c-8ae1-370429ad8b31",
+      "id": "7116c276-e866-4827-b05f-efe1b1590603",
       "name": "Telegram Trigger",
       "webhookId": "YOUR_WEB_HOOK_ID"
     },
@@ -29,10 +29,10 @@
       "type": "@n8n/n8n-nodes-langchain.agent",
       "typeVersion": 3,
       "position": [
-        144,
-        240
+        768,
+        -112
       ],
-      "id": "3d617f7f-2044-4d76-bbc8-2d92e5a82a65",
+      "id": "0d7bb405-1a6f-44b0-b2f1-b6e01d54c73c",
       "name": "AI Agent"
     },
     {
@@ -43,10 +43,10 @@
       "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
       "typeVersion": 1.3,
       "position": [
-        -64,
-        656
+        560,
+        320
       ],
-      "id": "ffde2163-e013-4081-a1cf-8f49bd5b2b09",
+      "id": "54c2d55d-78cd-4e87-b321-0308e99bb2be",
       "name": "Simple Memory"
     },
     {
@@ -69,10 +69,10 @@
       "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
       "typeVersion": 2.2,
       "position": [
-        560,
-        656
+        1184,
+        320
       ],
-      "id": "b1f02bcb-8462-4dd7-91c4-d8bcaf368823",
+      "id": "7c5adc42-c65e-4a10-af79-f37f39abc4b1",
       "name": "Notion Agent"
     },
     {
@@ -95,10 +95,10 @@
       "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
       "typeVersion": 2.2,
       "position": [
-        432,
-        656
+        1056,
+        320
       ],
-      "id": "1ef1e8b6-3021-4c89-b494-38a41f520e37",
+      "id": "c9c7d991-7df1-4245-96d3-d4ac8b36fd5c",
       "name": "Calendar Agent"
     },
     {
@@ -109,10 +109,10 @@
       "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
       "typeVersion": 1,
       "position": [
-        -208,
-        656
+        416,
+        320
       ],
-      "id": "a879ad6c-a981-43fe-a0c3-4fc284f8eb53",
+      "id": "fbfa6ebe-ea9e-4e4c-a5ae-30bbb39ff6a7",
       "name": "Gemini 2.5 Pro"
     },
     {
@@ -126,10 +126,10 @@
       "type": "n8n-nodes-base.telegram",
       "typeVersion": 1.2,
       "position": [
-        512,
-        240
+        1136,
+        -112
       ],
-      "id": "49e8b361-c1e6-43ad-8e51-fdca79108380",
+      "id": "1797ac5f-10bf-4907-8be6-b838a49f474f",
       "name": "AI Reply",
       "webhookId": "35e88eb6-5b17-4b09-b9b5-de33778946af"
     },
@@ -142,10 +142,10 @@
       },
       "type": "n8n-nodes-base.stickyNote",
       "position": [
-        -240,
-        560
+        384,
+        224
       ],
-      "id": "c786e5d3-8e68-46f3-a18c-5fb622a4c3b5",
+      "id": "85150e5f-d67b-40b1-aabf-21fb25046694",
       "name": "Sticky Note",
       "typeVersion": 1
     },
@@ -158,10 +158,10 @@
       },
       "type": "n8n-nodes-base.stickyNote",
       "position": [
-        -240,
-        128
+        384,
+        -224
       ],
-      "id": "8070d7b0-1b34-4ac3-b4d3-75df3bc84b90",
+      "id": "8022c963-b91c-42c5-ab50-0d0d9592945b",
       "name": "Sticky Note1",
       "typeVersion": 1
     },
@@ -174,10 +174,10 @@
       },
       "type": "n8n-nodes-base.stickyNote",
       "position": [
-        0,
-        0
+        624,
+        -352
       ],
-      "id": "fcc9a93e-8316-49c0-aafd-2091f12d1b9f",
+      "id": "65d2c21e-ca2e-43da-9ad2-86e3e415f551",
       "name": "Sticky Note2",
       "typeVersion": 1
     },
@@ -190,12 +190,27 @@
       },
       "type": "n8n-nodes-base.stickyNote",
       "position": [
-        352,
-        560
+        976,
+        224
       ],
-      "id": "ce381edd-27c2-4836-af86-409895fdc1d5",
+      "id": "5834fcc9-9664-4f85-ae09-e5cebf89f149",
       "name": "Sticky Note3",
       "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "content": "## Setup Guide\n1. Create your Telegram bot, and setup your credentials for the Telegram nodes using the Token for your bot.\n\n2. For the Chat model, feel free to swap with another LLM model of your choosing, or enter your credentials for the Google Gemini API.\n\n3. Import the templates for the sub-workflows. After that, select them in the 'Workflow' dropdown for each  tool for calling another workflow.",
+        "height": 400,
+        "width": 400
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -48,
+        224
+      ],
+      "typeVersion": 1,
+      "id": "bc7803c9-14cc-4fe0-93ce-44e7f8227751",
+      "name": "Sticky Note4"
     }
   ],
   "pinData": {},
@@ -267,13 +282,15 @@
       ]
     }
   },
-  "active": false,
+  "active": true,
   "settings": {
     "executionOrder": "v1"
   },
-  "versionId": "",
+  "versionId": "fbdba2fd-bef1-40bc-a888-9d92696660ff",
   "meta": {
+    "templateCredsSetupCompleted": true,
     "instanceId": "5d1532068cd59d0a505656debc1e996beb28cc747b2113028384dc732cb70630"
   },
+  "id": "3Qy9C8sxfdPZqown",
   "tags": []
 }

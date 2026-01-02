@@ -8,10 +8,10 @@
       "type": "n8n-nodes-base.executeWorkflowTrigger",
       "typeVersion": 1.1,
       "position": [
-        -400,
-        -80
+        0,
+        640
       ],
-      "id": "trigger-node",
+      "id": "e84102ce-1458-4dcc-8683-4a7fcae58257",
       "name": "When Executed by Another Workflow"
     },
     {
@@ -25,10 +25,10 @@
       "type": "@n8n/n8n-nodes-langchain.agent",
       "typeVersion": 3,
       "position": [
-        -192,
-        -80
+        208,
+        640
       ],
-      "id": "ai-agent-node",
+      "id": "33dabc8b-025b-42ef-9332-10ff9b0280a1",
       "name": "AI Agent",
       "onError": "continueErrorOutput"
     },
@@ -49,10 +49,10 @@
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.4,
       "position": [
-        480,
-        -208
+        880,
+        512
       ],
-      "id": "success-node",
+      "id": "8537baae-6b5e-4241-a3c0-b1ef38f0760c",
       "name": "Success"
     },
     {
@@ -72,10 +72,10 @@
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.4,
       "position": [
-        480,
-        -64
+        880,
+        656
       ],
-      "id": "error-node",
+      "id": "5a3eaed8-60f5-456a-a6a4-0571a88c32d6",
       "name": "Error Message"
     },
     {
@@ -102,17 +102,11 @@
       "type": "n8n-nodes-base.notionTool",
       "typeVersion": 2.2,
       "position": [
-        -96,
-        272
+        304,
+        992
       ],
-      "id": "get-pages-tool",
-      "name": "Get Pages",
-      "credentials": {
-        "notionApi": {
-          "id": "REPLACE_CREDENTIAL_ID",
-          "name": "Notion API"
-        }
-      }
+      "id": "de019634-9fd5-454d-acdb-998a250c6710",
+      "name": "Get Pages"
     },
     {
       "parameters": {
@@ -142,17 +136,11 @@
       "type": "n8n-nodes-base.notionTool",
       "typeVersion": 2.2,
       "position": [
-        16,
-        272
+        416,
+        992
       ],
-      "id": "create-page-tool",
-      "name": "Create Page",
-      "credentials": {
-        "notionApi": {
-          "id": "REPLACE_CREDENTIAL_ID",
-          "name": "Notion API"
-        }
-      }
+      "id": "0a4c97f6-4612-4990-88d4-d7caaa357eb0",
+      "name": "Create Page"
     },
     {
       "parameters": {
@@ -162,17 +150,11 @@
       "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
       "typeVersion": 1,
       "position": [
-        -288,
-        272
+        112,
+        992
       ],
-      "id": "model-node",
-      "name": "Gemini 2.5 Pro",
-      "credentials": {
-        "googlePalmApi": {
-          "id": "REPLACE_CREDENTIAL_ID",
-          "name": "Google Gemini API"
-        }
-      }
+      "id": "93176211-dad7-4ca9-a84a-64aabf1f6969",
+      "name": "Gemini 2.5 Pro"
     },
     {
       "parameters": {
@@ -183,10 +165,12 @@
       },
       "type": "n8n-nodes-base.stickyNote",
       "position": [
-        -480,
-        -240
+        -80,
+        480
       ],
-      "id": "note-1"
+      "id": "1ed699f9-38be-493b-b0ae-34655df12e47",
+      "name": "Sticky Note",
+      "typeVersion": 1
     },
     {
       "parameters": {
@@ -197,10 +181,12 @@
       },
       "type": "n8n-nodes-base.stickyNote",
       "position": [
-        240,
-        -384
+        640,
+        336
       ],
-      "id": "note-2"
+      "id": "5b9d9e66-cb64-4b54-801f-11d1dd74e93c",
+      "name": "Sticky Note1",
+      "typeVersion": 1
     },
     {
       "parameters": {
@@ -211,10 +197,12 @@
       },
       "type": "n8n-nodes-base.stickyNote",
       "position": [
-        -480,
-        -384
+        -80,
+        336
       ],
-      "id": "note-3"
+      "id": "cbc966e8-484d-48dc-a78a-0e5bfe6e0489",
+      "name": "Sticky Note2",
+      "typeVersion": 1
     },
     {
       "parameters": {
@@ -225,12 +213,30 @@
       },
       "type": "n8n-nodes-base.stickyNote",
       "position": [
-        -352,
-        144
+        48,
+        864
       ],
-      "id": "note-4"
+      "id": "468930ab-d9da-4e64-a050-54c945e967a2",
+      "name": "Sticky Note3",
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "content": "## Setup Guide \n1. Make sure that you add your preferred LLM model, or add your credentials for your Gemini API Key\n\n2. Plug in your credentials for the Notion node. Once this is done, close and re-open the nodes and it should pull the information from your database. Make sure that the properties match with what you have on your Notion database.",
+        "height": 400,
+        "width": 416
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -384,
+        864
+      ],
+      "typeVersion": 1,
+      "id": "cc4bc82a-5a02-45ac-a9fc-2bf786d27615",
+      "name": "Sticky Note4"
     }
   ],
+  "pinData": {},
   "connections": {
     "When Executed by Another Workflow": {
       "main": [
@@ -295,8 +301,19 @@
       ]
     }
   },
+  "active": false,
   "settings": {
     "executionOrder": "v1",
-    "timezone": "America/Edmonton"
-  }
+    "timeSavedMode": "fixed",
+    "timezone": "America/Edmonton",
+    "callerPolicy": "workflowsFromSameOwner",
+    "availableInMCP": false
+  },
+  "versionId": "b808fdc3-fa65-4b37-b9ed-93d2ffab7b36",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "5d1532068cd59d0a505656debc1e996beb28cc747b2113028384dc732cb70630"
+  },
+  "id": "zDXNCLKuogckzSsK",
+  "tags": []
 }
