@@ -115,3 +115,9 @@ The first sub-workflow is a calendar agent. Whenever anything calendar related n
 The second sub-workflow is a Notion agent. This workflow is called when anything Notion related is being requested such as, "please get me the pages for my Notion database," or "Add this page to my Notion database."
 
 ![multi-agent workflow - notion agent](https://github.com/user-attachments/assets/843c2369-e634-4df7-a810-950b018896b1)
+
+### AI Voice Assistant
+
+img
+
+This setup is similar to the multi-agent workflow where it calls sub-workflows for specific tasks, only this time you can talk to your assistant using your voice, and get a voice reply from your agent using ElevenLabs. This also uses a Telegram bot, you can text to it or use the microphone feature in Telegram to send an audio file. The agent proceses your message, calls the tools that it needs for the specific request, and then it sends it's reply through Telegram, sending an audio file of its reply with a voice. The voice can be picked from ElevenLabs' large voice library, which you can use to set a specific language of your choosing.
