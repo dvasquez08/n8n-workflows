@@ -1,0 +1,348 @@
+{
+  "name": "RD Email Agent",
+  "nodes": [
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        1088,
+        400
+      ],
+      "id": "87328a97-1b15-41d6-9d7e-efdbdc923735",
+      "name": "Gemini 2.5 Flash1"
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $fromAI(\"emailAddress\") }}",
+        "subject": "={{ $fromAI(\"subject\") }}",
+        "message": "={{ $fromAI(\"emailBody\") }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmailTool",
+      "typeVersion": 2.2,
+      "position": [
+        1216,
+        400
+      ],
+      "id": "b1dea620-18d3-46e3-92b5-898424d9b722",
+      "name": "Send Email",
+      "webhookId": "0dbf4b5d-81ba-4e2f-a2cf-56e22317fc8c"
+    },
+    {
+      "parameters": {
+        "operation": "getAll",
+        "limit": "={{ $fromAI(\"limit\",\"how many emails the user wants\") }}",
+        "filters": {
+          "sender": "={{ $fromAI(\"sender\",\"who the emails are from\") }}"
+        }
+      },
+      "type": "n8n-nodes-base.gmailTool",
+      "typeVersion": 2.2,
+      "position": [
+        1344,
+        400
+      ],
+      "id": "ad3911e7-f310-4cb8-8fbf-10e87ddad722",
+      "name": "Get Emails",
+      "webhookId": "22f0cd5b-ec9e-40b3-aaed-c9b3b395fc5b"
+    },
+    {
+      "parameters": {
+        "operation": "addLabels",
+        "messageId": "={{ $fromAI(\"ID\",\"the ID of the message\") }}",
+        "labelIds": "={{ $fromAI(\"labelID\") }}"
+      },
+      "type": "n8n-nodes-base.gmailTool",
+      "typeVersion": 2.2,
+      "position": [
+        1264,
+        576
+      ],
+      "id": "50f7fd37-b2db-44b7-9f82-2be35cefdd8c",
+      "name": "Label Emails",
+      "webhookId": "04d39d70-f5c6-4978-8bab-33af85636210"
+    },
+    {
+      "parameters": {
+        "resource": "label",
+        "returnAll": true
+      },
+      "type": "n8n-nodes-base.gmailTool",
+      "typeVersion": 2.2,
+      "position": [
+        1408,
+        576
+      ],
+      "id": "68644b85-9ad8-4bf3-91a1-6da2e18cd0da",
+      "name": "Get Labels",
+      "webhookId": "9ffbab1f-642f-4185-91d6-e3090055458f"
+    },
+    {
+      "parameters": {
+        "operation": "markAsRead",
+        "messageId": "={{ $fromAI(\"messageID\") }}"
+      },
+      "type": "n8n-nodes-base.gmailTool",
+      "typeVersion": 2.2,
+      "position": [
+        1488,
+        400
+      ],
+      "id": "7091a3e4-4501-4270-9167-9fd9a1290253",
+      "name": "Mark as Read",
+      "webhookId": "25e876e6-f64d-484a-b69c-cd7bb309eaf5"
+    },
+    {
+      "parameters": {
+        "inputSource": "passthrough"
+      },
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        992,
+        128
+      ],
+      "id": "a630c89e-bd70-4782-8ff8-36040f083fab",
+      "name": "When Executed by Another Workflow"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.query }}",
+        "options": {
+          "systemMessage": "# Overview\nYou are an email management assistant. All emails must be formatted professionally in HTML and signed off as \"Lola.\" \n\n**Email Management Tools**   \n   - Use \"Send Email\" to send emails.    \n   - Use \"Get Emails\" to retrieve emails when requested.\n   - Use \"Get Labels\" to retrieve labels.\n   - Use \"Mark Read\" to mark an email as unread. You must use \"Get Emails\" first so you have the message ID of the email to flag.\n   - Use \"Label Email\" to flag an email. You must use \"Get Emails\" first so you have the message ID of the email to flag. Then you must use \"Get Labels\" so you have the label ID.\n   - Use \"Email Reply\" to reply to an email. You must use \"Get Emails\" first so you have the message ID of the email to reply to.\n\n## Final Notes\n- Here is the current date/time: {{ $now }}"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3,
+      "position": [
+        1200,
+        128
+      ],
+      "id": "ecb3b948-1623-4ac2-b905-bc462516c592",
+      "name": "AI Agent",
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "30c599e2-15f7-4761-a02f-0bc72eb61f14",
+              "name": "success",
+              "value": "={{ $json.output }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1712,
+        -16
+      ],
+      "id": "8feb1b52-1ca4-4e1c-b1e6-d6db5bdef760",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "8ece9da0-1f7c-487a-8642-17b82e586edc",
+              "name": "Error",
+              "value": "Unable to complete tasks, please try again.",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1712,
+        144
+      ],
+      "id": "b324c396-7d1f-4be4-98ca-8c0b5e580b5a",
+      "name": "Edit Fields1"
+    },
+    {
+      "parameters": {
+        "content": "## Output\nSuccess node sends the output, the error node sends the manually entered error message if the agent cannot complete the task.",
+        "height": 448,
+        "width": 528,
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        1536,
+        -144
+      ],
+      "typeVersion": 1,
+      "id": "1273459e-61d0-48bf-b165-67699500dc8a",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "content": "## Sub-agent\nThe sub-agent takes the query from the parent agent, then uses its tools to complete the task that it has been given, and replies with the output.",
+        "height": 288,
+        "width": 576,
+        "color": 6
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        928,
+        16
+      ],
+      "typeVersion": 1,
+      "id": "00aed7e9-a9fa-4ea3-b0dd-e5bf60a8f168",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "content": "# Email Agent",
+        "height": 80,
+        "width": 576,
+        "color": 7
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        928,
+        -144
+      ],
+      "typeVersion": 1,
+      "id": "ba7cf169-8883-4e25-9aa0-b5d6a6890f84",
+      "name": "Sticky Note2"
+    },
+    {
+      "parameters": {
+        "content": "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n## Tools\nGemini 2.5 Flash is set as the LLM model. When the agent receives an email related request, it will call the appropriate tool depending on what is being requested.",
+        "height": 512,
+        "width": 736,
+        "color": 4
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        928,
+        336
+      ],
+      "typeVersion": 1,
+      "id": "239fbcd2-be29-49f7-a4b2-7a112b7f28b6",
+      "name": "Sticky Note3"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Gemini 2.5 Flash1": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send Email": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Emails": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Label Emails": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Labels": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Mark as Read": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "When Executed by Another Workflow": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Edit Fields1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "5d1532068cd59d0a505656debc1e996beb28cc747b2113028384dc732cb70630"
+  },
+  "tags": []
+}

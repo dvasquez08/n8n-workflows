@@ -1,0 +1,235 @@
+{
+  "name": "RD Research Agent",
+  "nodes": [
+    {
+      "parameters": {
+        "inputSource": "passthrough"
+      },
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        560,
+        544
+      ],
+      "id": "f9fa5e22-c4b5-4f20-96e5-11a5b9e0233d",
+      "name": "When Executed by Another Workflow"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.query }}",
+        "options": {
+          "systemMessage": "=You are a specialized research agent. Your primary function is to use your tools to provide accurate and up-to-date information.\nYou have two tools at your disposal:\n\nWikipedia Tool: Use this tool for all general web searches and to find information on any topic.\n\nYour workflow is as follows:\n\nFor all research questions, use the Wikipedia Tool.\n\nYou must always respond with the most relevant and precise information gathered from your tools.\n\nNever make up information. If a query cannot be answered, state that you were unable to find the information."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3,
+      "position": [
+        768,
+        544
+      ],
+      "id": "ee7d98c3-1ee4-4b14-9ee3-563c6a13118f",
+      "name": "AI Agent",
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        768,
+        800
+      ],
+      "id": "24e2998f-6401-4543-b117-b947467ac152",
+      "name": "Gemini 2.5 Flash"
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.toolWikipedia",
+      "typeVersion": 1,
+      "position": [
+        912,
+        800
+      ],
+      "id": "7f230e9c-5667-4936-a0ce-a5c98803d568",
+      "name": "Wikipedia"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "f04d6987-adda-4c48-a379-5f0e67faaac3",
+              "name": "success",
+              "value": "={{ $json.output }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1248,
+        400
+      ],
+      "id": "7a59a7df-a5ae-46c6-b830-46c950da3e9f",
+      "name": "Success"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "8694cea2-c1c1-43cb-8276-6ca0105b94f2",
+              "name": "error",
+              "value": "Could not complete tasks, please try again",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1248,
+        560
+      ],
+      "id": "e1eec980-4ef8-4084-b761-1bb9a059ba7e",
+      "name": "Error"
+    },
+    {
+      "parameters": {
+        "content": "## Sub-agent\nThe sub-agent takes the query from the parent agent, then uses its tools to complete the task that it has been given, and replies with the output.",
+        "height": 288,
+        "width": 608,
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        496,
+        432
+      ],
+      "typeVersion": 1,
+      "id": "2732f737-09c3-4d9e-a81b-b8c9f03394db",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "content": "## Output\nSuccess node sends the output, the error node sends the manually entered error message if the agent cannot complete the task.",
+        "height": 448,
+        "width": 432,
+        "color": 6
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        1136,
+        272
+      ],
+      "typeVersion": 1,
+      "id": "f4caf3cf-1823-45fa-a768-9ecf9ebd1221",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "content": "\n\n\n\n\n\n\n\n\n\n\n\n\n\n## Tools\nGemini 2.5 Flash is used as the LLM model. Whenever the sub-agent receives a research related inquiry, it will call the Wikipedia tool to search for relevant information.",
+        "height": 304,
+        "width": 608,
+        "color": 4
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        496,
+        752
+      ],
+      "typeVersion": 1,
+      "id": "59242e16-da3a-4a60-b8cc-3521741238f9",
+      "name": "Sticky Note2"
+    },
+    {
+      "parameters": {
+        "content": "# Research Agent",
+        "height": 96,
+        "width": 608,
+        "color": 7
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        496,
+        272
+      ],
+      "typeVersion": 1,
+      "id": "7892d7cc-e575-4472-b458-b04b9dac8aee",
+      "name": "Sticky Note3"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When Executed by Another Workflow": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Gemini 2.5 Flash": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wikipedia": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Success",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Error",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "24279f94-5692-4e90-9efe-fe9557a88ae8",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "5d1532068cd59d0a505656debc1e996beb28cc747b2113028384dc732cb70630"
+  },
+  "id": "aksrxSg8S6azu8El",
+  "tags": []
+}

@@ -1,0 +1,588 @@
+{
+  "name": "Parent Voice Agent",
+  "nodes": [
+    {
+      "parameters": {
+        "updates": [
+          "message"
+        ],
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegramTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -464,
+        80
+      ],
+      "id": "6014fb7e-720a-4708-b4ee-7336cbe06b87",
+      "name": "Telegram Trigger",
+      "webhookId": "",
+      "credentials": {
+        "telegramApi": {
+          "id": "",
+          "name": "Telegram API Credentials"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.message.voice.file_id }}",
+                    "rightValue": "",
+                    "operator": {
+                      "type": "string",
+                      "operation": "exists",
+                      "singleValue": true
+                    },
+                    "id": "9bf7b42c-7497-44e6-8381-8942163a62f0"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Voice"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "f06891ac-4007-41dc-a9b4-5d2bc43b1605",
+                    "leftValue": "={{ $json.message.text }}",
+                    "rightValue": "",
+                    "operator": {
+                      "type": "string",
+                      "operation": "exists",
+                      "singleValue": true
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Text"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.4,
+      "position": [
+        -288,
+        80
+      ],
+      "id": "23881629-448f-457b-a550-d77c2a961b31",
+      "name": "Switch"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.message.text }} || {{ $json.text }}",
+        "options": {
+          "systemMessage": "=# Overview \n\nYou are the ultimate personal assistant with a witty, and quirky sense of humor. Your job is to send the user's query to the correct tool. You should never be writing emails, or creating even summaries, you just need to call the correct tool. Be friendly, professional, concise, and straight to the point. \n\n## Tools \n\n- Email Agent: Use this tool to take action in email \n- Calendar Agent: Use this tool to take action in calendar \n- Contact Agent: Use this tool for anything contact related to update, or add contacts \n- Research Agent: Use this tool to do searching tasks such as web search or weather updates. \n- Notion Agent: Use this tool to create and get pages in a Notion database\n\n## Rules \n\n- Some actions require you to look up contact information first. For the following actions, you must get contact information and send that to the agent who needs it: \n- sending emails \n- drafting emails \n- creating calendar event with attendee \n- If the user asks about notes, summaries, study materials, reviewing past notes, or creating a study plan, route the query to the studyNotesAgent. \n\n## Examples 1) \n\n- Input: send an email to Dave asking him what time he wants to leave \n- Action: Use contactAgent to get David's email \n- Action: Use emailAgent to send the email. You will pass the tool a query like \"send Dave an email to ask what time he wants to leave. here is his email: [email address] - \n\nOutput: \n\nThe email has been sent to. Anything else I can help you with? 2. Calendar Tool Usage \n- When asked to schedule, reschedule, update, or check availability for an event, you MUST call the calendarAgent tool. \n- Do not ask for a event title unless specified. If no title is specified, create one using {{ $json.message.text }} or {{ $json.text }}. \n- If an event is scheduled involving another person, do not ask for their email unless specified. \n- If no duration is specified, assume 1 hour. \n- If you do not know the date, reference {{ $now }}. DO NOT ASK FOR YEAR, YOU SHOULD KNOW WHAT YEAR IT IS BY LOOKING AT {{ $now }}. If someone says something like \"Tomorrow,\" or \"This Saturday\" for example, check {{ $today }} so you know what they are talking about."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3,
+      "position": [
+        336,
+        96
+      ],
+      "id": "e8a8ba12-b503-4597-ba6d-1dd613beefa5",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "resource": "file",
+        "fileId": "={{ $json.message.voice.file_id }}",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        -80,
+        -32
+      ],
+      "id": "6fdb925e-3af1-4a16-974e-65ecedf2d507",
+      "name": "Get a file",
+      "webhookId": "",
+      "credentials": {
+        "telegramApi": {
+          "id": "",
+          "name": "Telegram API Credentials"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "speech",
+        "operation": "speechToText",
+        "additionalOptions": {},
+        "requestOptions": {}
+      },
+      "type": "@elevenlabs/n8n-nodes-elevenlabs.elevenLabs",
+      "typeVersion": 1,
+      "position": [
+        128,
+        -32
+      ],
+      "id": "fed718c7-de2d-4baa-bc05-8c32d174e656",
+      "name": "Transcribe audio or video",
+      "credentials": {
+        "elevenLabsApi": {
+          "id": "",
+          "name": "ElevenLabs API Credentials"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const items = [];\nfor (const item of $input.all()) {\n  const aiResponse = item.json.output;\n\n  if (aiResponse) {\n    // Handle common encoding issues and TTS-unfriendly characters\n    const cleanedResponse = aiResponse\n      .replace(/Ã‚Â°C/g, ' degrees Celsius')\n      .replace(/Ã‚Â°F/g, ' degrees Fahrenheit')\n      .replace(/Ã‚Â°/g, ' degrees')  // Generic degree symbol\n      .replace(/%/g, ' percent')\n      .replace(/â‚¬/g, ' euros')\n      .replace(/Â£/g, ' pounds')\n      .replace(/\\$/g, ' dollars');\n\n    items.push({\n      json: {\n        ...item.json,\n        output: cleanedResponse\n      }\n    });\n  }\n}\nreturn items;"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        688,
+        96
+      ],
+      "id": "e39b5c27-88a5-4b0d-8956-bcbfceda4760",
+      "name": "Code in JavaScript"
+    },
+    {
+      "parameters": {
+        "resource": "speech",
+        "voice": {
+          "__rl": true,
+          "value": "CwhRBWXzGAHq8TQ4Fs17",
+          "mode": "list",
+          "cachedResultName": "Roger - Laid-Back, Casual, Resonant"
+        },
+        "text": "={{ $json.output }}",
+        "additionalOptions": {},
+        "requestOptions": {}
+      },
+      "type": "@elevenlabs/n8n-nodes-elevenlabs.elevenLabs",
+      "typeVersion": 1,
+      "position": [
+        896,
+        96
+      ],
+      "id": "73bfd39f-67d7-406a-83b6-34fe9e54468b",
+      "name": "Convert text to speech",
+      "credentials": {
+        "elevenLabsApi": {
+          "id": "",
+          "name": "ElevenLabs API Credentials"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "sendAudio",
+        "chatId": "=YOUR_TELEGRAM_CHAT_ID",
+        "binaryData": true,
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        1104,
+        96
+      ],
+      "id": "673ffa1c-72d2-48af-87e8-08e68a5d9cba",
+      "name": "Send an audio file",
+      "webhookId": "",
+      "credentials": {
+        "telegramApi": {
+          "id": "",
+          "name": "Telegram API Credentials"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "={{ $json.message.from.id }}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        -160,
+        448
+      ],
+      "id": "aa648d33-c774-4086-b16a-0f50378b334b",
+      "name": "Simple Memory"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        -304,
+        448
+      ],
+      "id": "2db3c3de-91c8-4e3f-a27e-9d8d9c509ffb",
+      "name": "Gemini 2.5 Pro",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "",
+          "name": "Google Gemini API Credentials"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.toolThink",
+      "typeVersion": 1.1,
+      "position": [
+        -432,
+        448
+      ],
+      "id": "fa2b962e-fa74-466e-b7a7-ba77ac9a20c6",
+      "name": "Think"
+    },
+    {
+      "parameters": {
+        "description": "Call this tool for all calendar related tasks",
+        "workflowId": {
+          "__rl": true,
+          "value": "",
+          "mode": "list",
+          "cachedResultUrl": "",
+          "cachedResultName": "Calendar Agent"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 2.2,
+      "position": [
+        704,
+        448
+      ],
+      "id": "bf58cfe5-eaaf-4e9d-b8b7-7a5ad0a19270",
+      "name": "Calendar Agent"
+    },
+    {
+      "parameters": {
+        "description": "Call this tool for all Notion related tasks",
+        "workflowId": {
+          "__rl": true,
+          "value": "",
+          "mode": "list",
+          "cachedResultUrl": "",
+          "cachedResultName": "Notion Agent"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 2.2,
+      "position": [
+        544,
+        448
+      ],
+      "id": "77e84e1a-7eef-43b8-83f4-1fa1e7d5b879",
+      "name": "Notion Agent"
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "",
+          "mode": "list",
+          "cachedResultUrl": "",
+          "cachedResultName": "Email Agent"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 2.2,
+      "position": [
+        400,
+        448
+      ],
+      "id": "7c6ec2a9-e80c-4974-b7ba-244be3b119df",
+      "name": "Email Agent"
+    },
+    {
+      "parameters": {
+        "description": "Call this tool when contact information is needed",
+        "workflowId": {
+          "__rl": true,
+          "value": "",
+          "mode": "list",
+          "cachedResultUrl": "",
+          "cachedResultName": "Contacts Agent"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 2.2,
+      "position": [
+        256,
+        448
+      ],
+      "id": "33f414e3-256f-402b-835c-e95ec31d64a2",
+      "name": "Contact Agent"
+    },
+    {
+      "parameters": {
+        "description": "Call this tool when doing research",
+        "workflowId": {
+          "__rl": true,
+          "value": "",
+          "mode": "list",
+          "cachedResultUrl": "",
+          "cachedResultName": "Research Agent"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 2.2,
+      "position": [
+        112,
+        448
+      ],
+      "id": "1d306efc-35b5-4592-9eb1-4c544d3a473f",
+      "name": "Research Agent"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Telegram Trigger": {
+      "main": [
+        [
+          {
+            "node": "Switch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch": {
+      "main": [
+        [
+          {
+            "node": "Get a file",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get a file": {
+      "main": [
+        [
+          {
+            "node": "Transcribe audio or video",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Transcribe audio or video": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript": {
+      "main": [
+        [
+          {
+            "node": "Convert text to speech",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Convert text to speech": {
+      "main": [
+        [
+          {
+            "node": "Send an audio file",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Gemini 2.5 Pro": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Think": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Calendar Agent": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Notion Agent": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Email Agent": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Contact Agent": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Research Agent": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "",
+  "meta": {
+    "instanceId": ""
+  },
+  "id": "",
+  "tags": []
+}
