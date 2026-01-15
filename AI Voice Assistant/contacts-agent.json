@@ -1,38 +1,25 @@
 {
-  "name": "RD Contacts Agent",
+  "name": "Contact Agent Template",
   "nodes": [
-    {
-      "parameters": {
-        "options": {}
-      },
-      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
-      "typeVersion": 1,
-      "position": [
-        64,
-        736
-      ],
-      "id": "a0abd926-4812-4b94-a6ba-16cfa468c7a1",
-      "name": "Gemini 2.5 Flash2"
-    },
     {
       "parameters": {
         "operation": "get",
         "dataTableId": {
           "__rl": true,
-          "value": "YOUR_DATATABLE_ID",
+          "value": "DATA_TABLE_ID",
           "mode": "list",
-          "cachedResultName": "Contacts DataTable",
-          "cachedResultUrl": ""
+          "cachedResultName": "contacts-table",
+          "cachedResultUrl": "/projects/PROJECT_ID/datatables/DATA_TABLE_ID"
         },
         "returnAll": true
       },
       "type": "n8n-nodes-base.dataTableTool",
       "typeVersion": 1,
       "position": [
-        240,
-        736
+        -112,
+        496
       ],
-      "id": "095d7a43-3e94-41ee-8058-06a8f15954f7",
+      "id": "a14c7f96-13bb-4c6c-8bff-e956304be170",
       "name": "Get Contacts"
     },
     {
@@ -40,15 +27,15 @@
         "operation": "deleteRows",
         "dataTableId": {
           "__rl": true,
-          "value": "YOUR_DATATABLE_ID",
+          "value": "DATA_TABLE_ID",
           "mode": "list",
-          "cachedResultName": "Contacts DataTable",
-          "cachedResultUrl": ""
+          "cachedResultName": "contacts-table",
+          "cachedResultUrl": "/projects/PROJECT_ID/datatables/DATA_TABLE_ID"
         },
         "filters": {
           "conditions": [
             {
-              "keyName": "Name",
+              "keyName": "name",
               "keyValue": "={{ $fromAI('Name') }}"
             },
             {
@@ -62,10 +49,10 @@
       "type": "n8n-nodes-base.dataTableTool",
       "typeVersion": 1,
       "position": [
-        400,
-        736
+        48,
+        496
       ],
-      "id": "7ca7e78c-fff0-4fd1-a50d-2b13629a1d53",
+      "id": "3b9873df-40d2-4279-9b3b-0abdd325ce7f",
       "name": "Delete Contact"
     },
     {
@@ -73,15 +60,15 @@
         "operation": "update",
         "dataTableId": {
           "__rl": true,
-          "value": "YOUR_DATATABLE_ID",
+          "value": "DATA_TABLE_ID",
           "mode": "list",
-          "cachedResultName": "Contacts DataTable",
-          "cachedResultUrl": ""
+          "cachedResultName": "contacts-table",
+          "cachedResultUrl": "/projects/PROJECT_ID/datatables/DATA_TABLE_ID"
         },
         "filters": {
           "conditions": [
             {
-              "keyName": "Name",
+              "keyName": "name",
               "keyValue": "={{ $fromAI('Name') }}"
             },
             {
@@ -92,58 +79,9 @@
         },
         "columns": {
           "mappingMode": "defineBelow",
-          "value": {},
-          "matchingColumns": [],
-          "schema": [
-            {
-              "id": "Name",
-              "displayName": "Name",
-              "required": false,
-              "defaultMatch": false,
-              "display": true,
-              "type": "string",
-              "readOnly": false,
-              "removed": false
-            },
-            {
-              "id": "emailAddress",
-              "displayName": "emailAddress",
-              "required": false,
-              "defaultMatch": false,
-              "display": true,
-              "type": "string",
-              "readOnly": false,
-              "removed": false
-            }
-          ],
-          "attemptToConvertTypes": false,
-          "convertFieldsToString": false
-        },
-        "options": {}
-      },
-      "type": "n8n-nodes-base.dataTableTool",
-      "typeVersion": 1,
-      "position": [
-        240,
-        880
-      ],
-      "id": "f52e10bf-be68-417e-89f6-b99a4e0a6546",
-      "name": "Update Contact"
-    },
-    {
-      "parameters": {
-        "dataTableId": {
-          "__rl": true,
-          "value": "YOUR_DATATABLE_ID",
-          "mode": "list",
-          "cachedResultName": "Contacts DataTable",
-          "cachedResultUrl": ""
-        },
-        "columns": {
-          "mappingMode": "defineBelow",
           "value": {
-            "Name": "{{ $fromAI('Name') }}",
-            "emailAddress": "{{ $fromAI('emailAddress') }}"
+            "Name": "={{ $fromAI('Name') }}",
+            "emailAddress": "={{ $fromAI('emailAddress') }}"
           },
           "matchingColumns": [],
           "schema": [
@@ -176,10 +114,62 @@
       "type": "n8n-nodes-base.dataTableTool",
       "typeVersion": 1,
       "position": [
-        400,
-        880
+        -112,
+        640
       ],
-      "id": "7152fc21-cf56-4e5a-8ee6-8ea7e4c0b4b8",
+      "id": "39246d98-6f46-4535-b32a-646c7e27558a",
+      "name": "Update Contact"
+    },
+    {
+      "parameters": {
+        "dataTableId": {
+          "__rl": true,
+          "value": "DATA_TABLE_ID",
+          "mode": "list",
+          "cachedResultName": "contacts-table",
+          "cachedResultUrl": "/projects/PROJECT_ID/datatables/DATA_TABLE_ID"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "name": "={{ $fromAI('Name') }}",
+            "emailAddress": "={{ $fromAI('emailAddress') }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "name",
+              "displayName": "name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "emailAddress",
+              "displayName": "emailAddress",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.dataTableTool",
+      "typeVersion": 1,
+      "position": [
+        48,
+        640
+      ],
+      "id": "40d55e01-d9d2-471d-9948-0d6ea9e98bc1",
       "name": "Create Contact"
     },
     {
@@ -189,10 +179,10 @@
       "type": "n8n-nodes-base.executeWorkflowTrigger",
       "typeVersion": 1.1,
       "position": [
-        -64,
-        448
+        -416,
+        208
       ],
-      "id": "f34a3feb-2eca-4fe3-9fae-4625ccf7aa90",
+      "id": "3a5907bd-307a-40b1-af2a-2d3c4f98b07b",
       "name": "When Executed by Another Workflow"
     },
     {
@@ -200,16 +190,16 @@
         "promptType": "define",
         "text": "={{ $json.query }}",
         "options": {
-          "systemMessage": "# Overview\nYou are a contact management assistant. Your responsibilities include looking up contacts, adding new contacts, or updating a contact's information.\n\n**Contact Management**  \n   - Use \"Get Contacts\" to retrieve contact information. \n   - Use \"Add or Update Contact\" to store new contact information or modify existing entries. "
+          "systemMessage": "=# Overview\nYou are a contact management assistant. Your responsibilities include looking up contacts, adding new contacts, or updating a contact's information.\n\n**Contact Management**  \n   - Use \"Get Contacts\" to retrieve contact information. \n   - Use \"Add or Update Contact\" to store new contact information or modify existing entries. \n   - Use \"Delete Contacts\" to remove an existing contact from the data table"
         }
       },
       "type": "@n8n/n8n-nodes-langchain.agent",
       "typeVersion": 3,
       "position": [
-        208,
-        448
+        -144,
+        208
       ],
-      "id": "4366ec86-bc69-4628-8f4f-e21698d18a70",
+      "id": "ea2a3df9-3b8e-4d43-8e33-278fa2b98fe5",
       "name": "AI Agent",
       "onError": "continueErrorOutput"
     },
@@ -230,10 +220,10 @@
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.4,
       "position": [
-        704,
-        272
+        352,
+        32
       ],
-      "id": "8b9b80ca-38f6-4abd-8558-85576d308555",
+      "id": "523da02b-5e3a-4270-8a78-9481b4a303d0",
       "name": "Success"
     },
     {
@@ -253,10 +243,10 @@
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.4,
       "position": [
-        704,
-        464
+        352,
+        224
       ],
-      "id": "1f07e4c7-e2f6-4552-b64a-d4977fcd0497",
+      "id": "7b1f1740-af0a-47b2-b28f-71ed208bd692",
       "name": "Error"
     },
     {
@@ -268,11 +258,11 @@
       },
       "type": "n8n-nodes-base.stickyNote",
       "position": [
-        560,
-        176
+        208,
+        -64
       ],
       "typeVersion": 1,
-      "id": "08097684-afb9-4e4c-917d-865273ed0eab",
+      "id": "42ed4541-8f11-4d08-afa8-a2965926d8d0",
       "name": "Sticky Note"
     },
     {
@@ -284,11 +274,11 @@
       },
       "type": "n8n-nodes-base.stickyNote",
       "position": [
-        -112,
-        336
+        -464,
+        96
       ],
       "typeVersion": 1,
-      "id": "34d87f9f-6b9d-4e4b-88d5-e286028b1d8b",
+      "id": "c4c83c55-cc30-4a5d-a9bd-8242a15551d7",
       "name": "Sticky Note1"
     },
     {
@@ -300,11 +290,11 @@
       },
       "type": "n8n-nodes-base.stickyNote",
       "position": [
-        -112,
-        656
+        -464,
+        416
       ],
       "typeVersion": 1,
-      "id": "c627813f-54f1-4c3d-aa47-6b7532459078",
+      "id": "a7beb46f-e6c2-42f6-b592-55eb535450f8",
       "name": "Sticky Note2"
     },
     {
@@ -316,27 +306,35 @@
       },
       "type": "n8n-nodes-base.stickyNote",
       "position": [
-        -112,
-        176
+        -464,
+        -64
       ],
       "typeVersion": 1,
-      "id": "5d1d1b13-a51b-42db-9a62-242329b4bad8",
+      "id": "332be97d-0106-43f1-ae4f-48d9076fb3d4",
       "name": "Sticky Note3"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        -288,
+        496
+      ],
+      "id": "28d1e46f-f5f6-484b-aef1-cd8d9434f00e",
+      "name": "Gemini 2.5 Flash",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "GOOGLE_API_CRED_ID",
+          "name": "Google API Credentials"
+        }
+      }
     }
   ],
   "pinData": {},
   "connections": {
-    "Gemini 2.5 Flash2": {
-      "ai_languageModel": [
-        [
-          {
-            "node": "AI Agent",
-            "type": "ai_languageModel",
-            "index": 0
-          }
-        ]
-      ]
-    },
     "Get Contacts": {
       "ai_tool": [
         [
@@ -409,16 +407,32 @@
           }
         ]
       ]
+    },
+    "Gemini 2.5 Flash": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
     }
   },
-  "active": false,
+  "active": true,
   "settings": {
-    "executionOrder": "v1"
+    "executionOrder": "v1",
+    "timeSavedMode": "fixed",
+    "timezone": "America/Edmonton",
+    "callerPolicy": "workflowsFromSameOwner",
+    "availableInMCP": false
   },
-  "versionId": "",
+  "versionId": "TEMPLATE_VERSION_ID",
   "meta": {
     "templateCredsSetupCompleted": true,
-    "instanceId": "5d1532068cd59d0a505656debc1e996beb28cc747b2113028384dc732cb70630"
+    "instanceId": "YOUR_INSTANCE_ID"
   },
+  "id": "CONTACT_WORKFLOW_ID",
   "tags": []
 }

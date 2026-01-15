@@ -1,5 +1,5 @@
 {
-  "name": "RD Research Agent",
+  "name": "Research Agent Template",
   "nodes": [
     {
       "parameters": {
@@ -8,10 +8,10 @@
       "type": "n8n-nodes-base.executeWorkflowTrigger",
       "typeVersion": 1.1,
       "position": [
-        560,
-        544
+        -272,
+        -64
       ],
-      "id": "f9fa5e22-c4b5-4f20-96e5-11a5b9e0233d",
+      "id": "67eb5736-3488-4da3-bb88-327881c6be69",
       "name": "When Executed by Another Workflow"
     },
     {
@@ -25,10 +25,10 @@
       "type": "@n8n/n8n-nodes-langchain.agent",
       "typeVersion": 3,
       "position": [
-        768,
-        544
+        -64,
+        -64
       ],
-      "id": "ee7d98c3-1ee4-4b14-9ee3-563c6a13118f",
+      "id": "65b251ae-7cf3-4c98-9585-b5b57a58f9d5",
       "name": "AI Agent",
       "onError": "continueErrorOutput"
     },
@@ -39,21 +39,27 @@
       "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
       "typeVersion": 1,
       "position": [
-        768,
-        800
+        -64,
+        192
       ],
-      "id": "24e2998f-6401-4543-b117-b947467ac152",
-      "name": "Gemini 2.5 Flash"
+      "id": "0cc2a47d-4a7e-43c1-8357-a823181e7b7a",
+      "name": "Gemini 2.5 Flash",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "GOOGLE_API_CRED_ID",
+          "name": "Google API Credentials"
+        }
+      }
     },
     {
       "parameters": {},
       "type": "@n8n/n8n-nodes-langchain.toolWikipedia",
       "typeVersion": 1,
       "position": [
-        912,
-        800
+        80,
+        192
       ],
-      "id": "7f230e9c-5667-4936-a0ce-a5c98803d568",
+      "id": "1f278f4e-c353-4834-9628-7af40574bc37",
       "name": "Wikipedia"
     },
     {
@@ -73,10 +79,10 @@
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.4,
       "position": [
-        1248,
-        400
+        416,
+        -208
       ],
-      "id": "7a59a7df-a5ae-46c6-b830-46c950da3e9f",
+      "id": "a540ac69-50d8-4d7e-bf02-53c8a7bbf661",
       "name": "Success"
     },
     {
@@ -96,75 +102,11 @@
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.4,
       "position": [
-        1248,
-        560
+        416,
+        -48
       ],
-      "id": "e1eec980-4ef8-4084-b761-1bb9a059ba7e",
+      "id": "a0090425-4b33-4f5c-b1ec-6c4924e39b1f",
       "name": "Error"
-    },
-    {
-      "parameters": {
-        "content": "## Sub-agent\nThe sub-agent takes the query from the parent agent, then uses its tools to complete the task that it has been given, and replies with the output.",
-        "height": 288,
-        "width": 608,
-        "color": 5
-      },
-      "type": "n8n-nodes-base.stickyNote",
-      "position": [
-        496,
-        432
-      ],
-      "typeVersion": 1,
-      "id": "2732f737-09c3-4d9e-a81b-b8c9f03394db",
-      "name": "Sticky Note"
-    },
-    {
-      "parameters": {
-        "content": "## Output\nSuccess node sends the output, the error node sends the manually entered error message if the agent cannot complete the task.",
-        "height": 448,
-        "width": 432,
-        "color": 6
-      },
-      "type": "n8n-nodes-base.stickyNote",
-      "position": [
-        1136,
-        272
-      ],
-      "typeVersion": 1,
-      "id": "f4caf3cf-1823-45fa-a768-9ecf9ebd1221",
-      "name": "Sticky Note1"
-    },
-    {
-      "parameters": {
-        "content": "\n\n\n\n\n\n\n\n\n\n\n\n\n\n## Tools\nGemini 2.5 Flash is used as the LLM model. Whenever the sub-agent receives a research related inquiry, it will call the Wikipedia tool to search for relevant information.",
-        "height": 304,
-        "width": 608,
-        "color": 4
-      },
-      "type": "n8n-nodes-base.stickyNote",
-      "position": [
-        496,
-        752
-      ],
-      "typeVersion": 1,
-      "id": "59242e16-da3a-4a60-b8cc-3521741238f9",
-      "name": "Sticky Note2"
-    },
-    {
-      "parameters": {
-        "content": "# Research Agent",
-        "height": 96,
-        "width": 608,
-        "color": 7
-      },
-      "type": "n8n-nodes-base.stickyNote",
-      "position": [
-        496,
-        272
-      ],
-      "typeVersion": 1,
-      "id": "7892d7cc-e575-4472-b458-b04b9dac8aee",
-      "name": "Sticky Note3"
     }
   ],
   "pinData": {},
@@ -221,15 +163,19 @@
       ]
     }
   },
-  "active": false,
+  "active": true,
   "settings": {
-    "executionOrder": "v1"
+    "executionOrder": "v1",
+    "timeSavedMode": "fixed",
+    "timezone": "America/Edmonton",
+    "callerPolicy": "workflowsFromSameOwner",
+    "availableInMCP": false
   },
-  "versionId": "24279f94-5692-4e90-9efe-fe9557a88ae8",
+  "versionId": "TEMPLATE_VERSION_ID",
   "meta": {
     "templateCredsSetupCompleted": true,
-    "instanceId": "5d1532068cd59d0a505656debc1e996beb28cc747b2113028384dc732cb70630"
+    "instanceId": "YOUR_INSTANCE_ID"
   },
-  "id": "aksrxSg8S6azu8El",
+  "id": "RESEARCH_WORKFLOW_ID",
   "tags": []
 }

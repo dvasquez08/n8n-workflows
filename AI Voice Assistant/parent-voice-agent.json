@@ -1,5 +1,5 @@
 {
-  "name": "Parent Voice Agent",
+  "name": "Voice Agent Template",
   "nodes": [
     {
       "parameters": {
@@ -11,18 +11,12 @@
       "type": "n8n-nodes-base.telegramTrigger",
       "typeVersion": 1.2,
       "position": [
-        -464,
-        80
+        592,
+        48
       ],
-      "id": "6014fb7e-720a-4708-b4ee-7336cbe06b87",
+      "id": "f8880e18-bc8a-4e90-8550-7e0184a12075",
       "name": "Telegram Trigger",
-      "webhookId": "",
-      "credentials": {
-        "telegramApi": {
-          "id": "",
-          "name": "Telegram API Credentials"
-        }
-      }
+      "webhookId": "WEBHOOK_ID_PLACEHOLDER"
     },
     {
       "parameters": {
@@ -85,10 +79,10 @@
       "type": "n8n-nodes-base.switch",
       "typeVersion": 3.4,
       "position": [
-        -288,
-        80
+        768,
+        48
       ],
-      "id": "23881629-448f-457b-a550-d77c2a961b31",
+      "id": "359bee94-3908-4cd0-a097-2c21c33a19a6",
       "name": "Switch"
     },
     {
@@ -96,16 +90,16 @@
         "promptType": "define",
         "text": "={{ $json.message.text }} || {{ $json.text }}",
         "options": {
-          "systemMessage": "=# Overview \n\nYou are the ultimate personal assistant with a witty, and quirky sense of humor. Your job is to send the user's query to the correct tool. You should never be writing emails, or creating even summaries, you just need to call the correct tool. Be friendly, professional, concise, and straight to the point. \n\n## Tools \n\n- Email Agent: Use this tool to take action in email \n- Calendar Agent: Use this tool to take action in calendar \n- Contact Agent: Use this tool for anything contact related to update, or add contacts \n- Research Agent: Use this tool to do searching tasks such as web search or weather updates. \n- Notion Agent: Use this tool to create and get pages in a Notion database\n\n## Rules \n\n- Some actions require you to look up contact information first. For the following actions, you must get contact information and send that to the agent who needs it: \n- sending emails \n- drafting emails \n- creating calendar event with attendee \n- If the user asks about notes, summaries, study materials, reviewing past notes, or creating a study plan, route the query to the studyNotesAgent. \n\n## Examples 1) \n\n- Input: send an email to Dave asking him what time he wants to leave \n- Action: Use contactAgent to get David's email \n- Action: Use emailAgent to send the email. You will pass the tool a query like \"send Dave an email to ask what time he wants to leave. here is his email: [email address] - \n\nOutput: \n\nThe email has been sent to. Anything else I can help you with? 2. Calendar Tool Usage \n- When asked to schedule, reschedule, update, or check availability for an event, you MUST call the calendarAgent tool. \n- Do not ask for a event title unless specified. If no title is specified, create one using {{ $json.message.text }} or {{ $json.text }}. \n- If an event is scheduled involving another person, do not ask for their email unless specified. \n- If no duration is specified, assume 1 hour. \n- If you do not know the date, reference {{ $now }}. DO NOT ASK FOR YEAR, YOU SHOULD KNOW WHAT YEAR IT IS BY LOOKING AT {{ $now }}. If someone says something like \"Tomorrow,\" or \"This Saturday\" for example, check {{ $today }} so you know what they are talking about."
+          "systemMessage": "=# Overview \n\nYou are the ultimate personal assistant with a witty, and quirky sense of humor. Your job is to send the user's query to the correct tool. You should never be writing emails, or creating even summaries, you just need to call the correct tool. Be friendly, professional, concise, and straight to the point. \n\n## Tools \n\n- Email Agent: Use this tool to take action in email \n- Calendar Agent: Use this tool to take action in calendar \n- Contact Agent: Use this tool whenever requested about anything about contacts. This is where my contacts are. When asked about my contacts, use this tool. This is used to get contacts, update contacts, or delete contacts. When referring to anyone by name, check here first to look for them.\n- Research Agent: Use this tool to do look up information about a topic or doing some research.\n- Notion Agent: Use this tool to create and get pages in a Notion database\n\n## Rules \n\n- Some actions require you to look up contact information first. For the following actions, you must get contact information and send that to the agent who needs it: \n- sending emails \n- drafting emails \n- creating calendar event with attendee \n- If the user asks about notes, summaries, study materials, reviewing past notes, or creating a study plan, route the query to the studyNotesAgent. \n- If a subject or body hasn't been specified, you can decide what to put and use words that are appropriate with the email's topic.\n\n## Examples 1) \n\n- Input: send an email to Dave asking him what time he wants to leave \n- Action: Use contactAgent to get David's email \n- Action: Use emailAgent to send the email. You will pass the tool a query like \"send Dave an email to ask what time he wants to leave. here is his email: [email address] - \n\nOutput: \n\nThe email has been sent to. Anything else I can help you with? 2. Calendar Tool Usage \n- When asked to schedule, reschedule, update, or check availability for an event, you MUST call the calendarAgent tool. \n- Do not ask for a event title unless specified. If no title is specified, create one using {{ $json.message.text }} or {{ $json.text }}. \n- If an event is scheduled involving another person, do not ask for their email unless specified. \n- If no duration is specified, assume 1 hour. \n- If you do not know the date, reference {{ $now }}. DO NOT ASK FOR YEAR, YOU SHOULD KNOW WHAT YEAR IT IS BY LOOKING AT {{ $now }}. If someone says something like \"Tomorrow,\" or \"This Saturday\" for example, check {{ $today }} so you know what they are talking about."
         }
       },
       "type": "@n8n/n8n-nodes-langchain.agent",
       "typeVersion": 3,
       "position": [
-        336,
-        96
+        1392,
+        64
       ],
-      "id": "e8a8ba12-b503-4597-ba6d-1dd613beefa5",
+      "id": "9c2f049f-4cd4-44f1-b909-7196c6f0a6d7",
       "name": "AI Agent"
     },
     {
@@ -117,18 +111,12 @@
       "type": "n8n-nodes-base.telegram",
       "typeVersion": 1.2,
       "position": [
-        -80,
-        -32
+        976,
+        -80
       ],
-      "id": "6fdb925e-3af1-4a16-974e-65ecedf2d507",
+      "id": "4cc5965a-4e9a-4329-9a4b-db814e2071d6",
       "name": "Get a file",
-      "webhookId": "",
-      "credentials": {
-        "telegramApi": {
-          "id": "",
-          "name": "Telegram API Credentials"
-        }
-      }
+      "webhookId": "WEBHOOK_ID_PLACEHOLDER"
     },
     {
       "parameters": {
@@ -140,29 +128,23 @@
       "type": "@elevenlabs/n8n-nodes-elevenlabs.elevenLabs",
       "typeVersion": 1,
       "position": [
-        128,
-        -32
+        1184,
+        -80
       ],
-      "id": "fed718c7-de2d-4baa-bc05-8c32d174e656",
-      "name": "Transcribe audio or video",
-      "credentials": {
-        "elevenLabsApi": {
-          "id": "",
-          "name": "ElevenLabs API Credentials"
-        }
-      }
+      "id": "f7681bd6-9328-4b63-b376-8c57053a9a20",
+      "name": "Transcribe audio or video"
     },
     {
       "parameters": {
-        "jsCode": "const items = [];\nfor (const item of $input.all()) {\n  const aiResponse = item.json.output;\n\n  if (aiResponse) {\n    // Handle common encoding issues and TTS-unfriendly characters\n    const cleanedResponse = aiResponse\n      .replace(/Ã‚Â°C/g, ' degrees Celsius')\n      .replace(/Ã‚Â°F/g, ' degrees Fahrenheit')\n      .replace(/Ã‚Â°/g, ' degrees')  // Generic degree symbol\n      .replace(/%/g, ' percent')\n      .replace(/â‚¬/g, ' euros')\n      .replace(/Â£/g, ' pounds')\n      .replace(/\\$/g, ' dollars');\n\n    items.push({\n      json: {\n        ...item.json,\n        output: cleanedResponse\n      }\n    });\n  }\n}\nreturn items;"
+        "jsCode": "const items = [];\nfor (const item of $input.all()) {\n  const aiResponse = item.json.output;\n\n  if (aiResponse) {\n    let cleanedResponse = aiResponse;\n\n    cleanedResponse = cleanedResponse.replace(/\\b[\\w\\.-]+@[\\w\\.-]+\\.\\w{2,}\\b/g, (email) => {\n      return email.replace(/@/g, ' at ').replace(/\\./g, ' dot ');\n    });\n\n    cleanedResponse = cleanedResponse.replace(/\\b(\\d{1,2}):(\\d{2})\\b/g, (_, hour, minute) => {\n      if (minute === '00') {\n        return `${hour} o'clock`;\n      }\n      return `${hour} ${minute}`; \n    });\n\n    cleanedResponse = cleanedResponse\n      .replace(/Ãƒâ€šÃ‚Â°C/g, ' degrees Celsius')\n      .replace(/Ãƒâ€šÃ‚Â°F/g, ' degrees Fahrenheit')\n      .replace(/Ãƒâ€šÃ‚Â°/g, ' degrees') \n      .replace(/%/g, ' percent')\n      .replace(/Ã¢â€šÂ¬/g, ' euros')\n      .replace(/Ã‚Â£/g, ' pounds')\n      .replace(/\\$/g, ' dollars');\n\n    items.push({\n      json: {\n        ...item.json,\n        output: cleanedResponse\n      }\n    });\n  }\n}\nreturn items;"
       },
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        688,
-        96
+        1728,
+        64
       ],
-      "id": "e39b5c27-88a5-4b0d-8956-bcbfceda4760",
+      "id": "199ec681-5ba1-4bd5-a9b2-62d7f8e05eae",
       "name": "Code in JavaScript"
     },
     {
@@ -170,9 +152,8 @@
         "resource": "speech",
         "voice": {
           "__rl": true,
-          "value": "CwhRBWXzGAHq8TQ4Fs17",
-          "mode": "list",
-          "cachedResultName": "Roger - Laid-Back, Casual, Resonant"
+          "value": "VOICE_ID_PLACEHOLDER",
+          "mode": "id"
         },
         "text": "={{ $json.output }}",
         "additionalOptions": {},
@@ -181,83 +162,66 @@
       "type": "@elevenlabs/n8n-nodes-elevenlabs.elevenLabs",
       "typeVersion": 1,
       "position": [
-        896,
-        96
+        1936,
+        64
       ],
-      "id": "73bfd39f-67d7-406a-83b6-34fe9e54468b",
-      "name": "Convert text to speech",
-      "credentials": {
-        "elevenLabsApi": {
-          "id": "",
-          "name": "ElevenLabs API Credentials"
-        }
-      }
+      "id": "de9c913e-5c09-49bf-ac05-e11f7e88d677",
+      "name": "Convert text to speech"
     },
     {
       "parameters": {
         "operation": "sendAudio",
-        "chatId": "=YOUR_TELEGRAM_CHAT_ID",
+        "chatId": "YOUR_TELEGRAM_CHAT_ID",
         "binaryData": true,
         "additionalFields": {}
       },
       "type": "n8n-nodes-base.telegram",
       "typeVersion": 1.2,
       "position": [
-        1104,
-        96
+        2128,
+        64
       ],
-      "id": "673ffa1c-72d2-48af-87e8-08e68a5d9cba",
+      "id": "bc2a4bc9-fca5-4a13-bf6c-2859d6067d6f",
       "name": "Send an audio file",
-      "webhookId": "",
-      "credentials": {
-        "telegramApi": {
-          "id": "",
-          "name": "Telegram API Credentials"
-        }
-      }
+      "webhookId": "WEBHOOK_ID_PLACEHOLDER"
     },
     {
       "parameters": {
         "sessionIdType": "customKey",
-        "sessionKey": "={{ $json.message.from.id }}"
+        "sessionKey": "=YOUR_SESSION_KEY"
       },
       "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
       "typeVersion": 1.3,
       "position": [
-        -160,
-        448
+        896,
+        416
       ],
-      "id": "aa648d33-c774-4086-b16a-0f50378b334b",
+      "id": "bf0b9f48-393b-4479-b901-fa5d142866f7",
       "name": "Simple Memory"
     },
     {
       "parameters": {
+        "modelName": "models/gemini-2.5-pro",
         "options": {}
       },
       "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
       "typeVersion": 1,
       "position": [
-        -304,
-        448
+        752,
+        416
       ],
-      "id": "2db3c3de-91c8-4e3f-a27e-9d8d9c509ffb",
-      "name": "Gemini 2.5 Pro",
-      "credentials": {
-        "googlePalmApi": {
-          "id": "",
-          "name": "Google Gemini API Credentials"
-        }
-      }
+      "id": "82c0fb34-cafd-451e-8204-15a4e34aad48",
+      "name": "Gemini 2.5 Pro"
     },
     {
       "parameters": {},
       "type": "@n8n/n8n-nodes-langchain.toolThink",
       "typeVersion": 1.1,
       "position": [
-        -432,
-        448
+        624,
+        416
       ],
-      "id": "fa2b962e-fa74-466e-b7a7-ba77ac9a20c6",
+      "id": "42f6760b-5ced-4015-b874-97f25f3f1cbc",
       "name": "Think"
     },
     {
@@ -265,9 +229,9 @@
         "description": "Call this tool for all calendar related tasks",
         "workflowId": {
           "__rl": true,
-          "value": "",
+          "value": "CALENDAR_WORKFLOW_ID",
           "mode": "list",
-          "cachedResultUrl": "",
+          "cachedResultUrl": "/workflow/CALENDAR_WORKFLOW_ID",
           "cachedResultName": "Calendar Agent"
         },
         "workflowInputs": {
@@ -282,10 +246,10 @@
       "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
       "typeVersion": 2.2,
       "position": [
-        704,
-        448
+        1760,
+        416
       ],
-      "id": "bf58cfe5-eaaf-4e9d-b8b7-7a5ad0a19270",
+      "id": "9a76813b-5607-46d6-8111-8b6577073742",
       "name": "Calendar Agent"
     },
     {
@@ -293,9 +257,9 @@
         "description": "Call this tool for all Notion related tasks",
         "workflowId": {
           "__rl": true,
-          "value": "",
+          "value": "NOTION_WORKFLOW_ID",
           "mode": "list",
-          "cachedResultUrl": "",
+          "cachedResultUrl": "/workflow/NOTION_WORKFLOW_ID",
           "cachedResultName": "Notion Agent"
         },
         "workflowInputs": {
@@ -310,19 +274,19 @@
       "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
       "typeVersion": 2.2,
       "position": [
-        544,
-        448
+        1600,
+        416
       ],
-      "id": "77e84e1a-7eef-43b8-83f4-1fa1e7d5b879",
+      "id": "48982de3-224f-46f7-ade7-c303ad09fbbb",
       "name": "Notion Agent"
     },
     {
       "parameters": {
         "workflowId": {
           "__rl": true,
-          "value": "",
+          "value": "EMAIL_WORKFLOW_ID",
           "mode": "list",
-          "cachedResultUrl": "",
+          "cachedResultUrl": "/workflow/EMAIL_WORKFLOW_ID",
           "cachedResultName": "Email Agent"
         },
         "workflowInputs": {
@@ -337,10 +301,10 @@
       "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
       "typeVersion": 2.2,
       "position": [
-        400,
-        448
+        1456,
+        416
       ],
-      "id": "7c6ec2a9-e80c-4974-b7ba-244be3b119df",
+      "id": "fdc88499-65c0-4a8d-aba4-aaec1bb25ecb",
       "name": "Email Agent"
     },
     {
@@ -348,10 +312,10 @@
         "description": "Call this tool when contact information is needed",
         "workflowId": {
           "__rl": true,
-          "value": "",
+          "value": "CONTACT_WORKFLOW_ID",
           "mode": "list",
-          "cachedResultUrl": "",
-          "cachedResultName": "Contacts Agent"
+          "cachedResultUrl": "/workflow/CONTACT_WORKFLOW_ID",
+          "cachedResultName": "Contact Agent"
         },
         "workflowInputs": {
           "mappingMode": "defineBelow",
@@ -365,10 +329,10 @@
       "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
       "typeVersion": 2.2,
       "position": [
-        256,
-        448
+        1312,
+        416
       ],
-      "id": "33f414e3-256f-402b-835c-e95ec31d64a2",
+      "id": "64368c98-dd6d-4e86-a998-e66ee11b33c1",
       "name": "Contact Agent"
     },
     {
@@ -376,9 +340,9 @@
         "description": "Call this tool when doing research",
         "workflowId": {
           "__rl": true,
-          "value": "",
+          "value": "RESEARCH_WORKFLOW_ID",
           "mode": "list",
-          "cachedResultUrl": "",
+          "cachedResultUrl": "/workflow/RESEARCH_WORKFLOW_ID",
           "cachedResultName": "Research Agent"
         },
         "workflowInputs": {
@@ -393,11 +357,26 @@
       "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
       "typeVersion": 2.2,
       "position": [
-        112,
-        448
+        1168,
+        416
       ],
-      "id": "1d306efc-35b5-4592-9eb1-4c544d3a473f",
+      "id": "78d801a8-475d-4a6e-a2b7-9d178f2e062c",
       "name": "Research Agent"
+    },
+    {
+      "parameters": {
+        "content": "## Setup Guide\n1. Plug in your credentials for Telegram\n2. Install the ElevenLabs node.\n3. Plug in your credentials for ElevenLabs\n4. Plug in your credentials for Google Gemini, or replace it with a model of your choice.\n5. Import the sub-workflows as their own files, connect them, and match them with each sub-workflow tool.\n6. Add your Telegram chat ID into your Simple Memory and on the 'Send an audio file' node, replacing the placeholders.\n\nComment on my YouTube video if you get stuck or have any questions.",
+        "height": 432,
+        "width": 416
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        64,
+        32
+      ],
+      "typeVersion": 1,
+      "id": "973017cc-e872-47e4-ad14-b33cbc6d92f6",
+      "name": "Sticky Note"
     }
   ],
   "pinData": {},
@@ -577,12 +556,14 @@
   },
   "active": false,
   "settings": {
-    "executionOrder": "v1"
+    "executionOrder": "v1",
+    "availableInMCP": false
   },
-  "versionId": "",
+  "versionId": "64994adf-d851-4512-b87d-d4df1715f595",
   "meta": {
-    "instanceId": ""
+    "templateCredsSetupCompleted": true,
+    "instanceId": "5a5f77faeef7d58c33c0acde43a3c7c55651cd9664cab1695ac7a6104b930036"
   },
-  "id": "",
+  "id": "3kb79mq32A1oFIKbx-Axz",
   "tags": []
 }
