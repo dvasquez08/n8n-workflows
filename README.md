@@ -126,4 +126,6 @@ This setup is similar to the multi-agent workflow where it calls sub-workflows f
 
 ### Newsletter Capture Automation
 
+![newsletter automation screenshot](https://github.com/user-attachments/assets/6e54f292-2b15-4196-a84c-bbedcdfe2c01)
+
 This neat little workflow takes all the text from your favorite newsletters, puts them in a Google Doc saved on your Drive. The way I currently use this is once the Google Doc is created in my Google Drive, I import that into a Notebook LM as a source. I then use the Audio Overview feature to turn the newsletter into a podcast or a breakdown so that I can listen to it instead while I'm on the go, on the train or out for a walk. I've signed up with quite a few newsletters, I can't read all of them all the time so I thought of this idea which I thought was pretty helpful and thought I would share. There is a Gmail version and an Outlook version, depending on what mail client you are using.
