@@ -26,6 +26,7 @@ For business inquiries: dvasquez@davtek.io
 - [Social Media Manager Text Only](#social-media-manager-text-only)
 - [Multi-Agent AI Assistant](#multi-agent-ai-assistant)
 - [AI Voice Assistant](#ai-voice-assistant)
+- [Newsletter Capture Automation](#newsletter-capture-automation)
 
 ## Notion Daily Briefing
 
@@ -122,3 +123,7 @@ The second sub-workflow is a Notion agent. This workflow is called when anything
 This setup is similar to the multi-agent workflow where it calls sub-workflows for specific tasks, only this time you can talk to your assistant using your voice, and get a voice reply from your agent using ElevenLabs. This also uses a Telegram bot, you can text to it or use the microphone feature in Telegram to send an audio file. The agent proceses your message, calls the tools that it needs for the specific request, and then it sends it's reply through Telegram, sending an audio file of its reply with a voice. The voice can be picked from ElevenLabs' large voice library, which you can use to set a specific language of your choosing. The code snippet before the ElevenLabs node, allows the voice to properly pronounce symbols such as Celcius, Dollar, Percent, etc.
 
 <img width="1277" height="505" alt="workflow" src="https://github.com/user-attachments/assets/1cea3d42-57ac-474b-a647-7c896c1480f3" />
+
+### Newsletter Capture Automation
+
+This neat little workflow takes all the text from your favorite newsletters, puts them in a Google Doc saved on your Drive. The way I currently use this is once the Google Doc is created in my Google Drive, I import that into a Notebook LM as a source. I then use the Audio Overview feature to turn the newsletter into a podcast or a breakdown so that I can listen to it instead while I'm on the go, on the train or out for a walk. I've signed up with quite a few newsletters, I can't read all of them all the time so I thought of this idea which I thought was pretty helpful and thought I would share. There is a Gmail version and an Outlook version, depending on what mail client you are using.
