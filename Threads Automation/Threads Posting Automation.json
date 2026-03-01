@@ -1,0 +1,446 @@
+{
+  "name": "Threads Posting Automation",
+  "nodes": [
+    {
+      "parameters": {
+        "content": "# Threads Automation",
+        "height": 128,
+        "width": 432,
+        "color": 7
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        3120,
+        1264
+      ],
+      "typeVersion": 1,
+      "id": "4d00458a-2216-4e12-a276-02aa73571b8c",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "daysInterval": 3,
+              "triggerAtHour": 7
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        2912,
+        1584
+      ],
+      "id": "f2e8c210-c3e6-4d99-80b5-4b7d7b3d9611",
+      "name": "Schedule Trigger"
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "YOUR_DOCUMENT_ID_HERE",
+          "mode": "list",
+          "cachedResultName": "Post History",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/YOUR_DOCUMENT_ID_HERE/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Tweets",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/YOUR_DOCUMENT_ID_HERE/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Tweets": "={{ $('Social Media Manager').item.json.output }}"
+          },
+          "matchingColumns": [
+            "Tweets"
+          ],
+          "schema": [
+            {
+              "id": "Tweets",
+              "displayName": "Tweets",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        4208,
+        1584
+      ],
+      "id": "ec6f0dee-e063-4f1e-b056-6e6cb1b9f5a4",
+      "name": "Update Post History Log",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "YOUR_CREDENTIAL_ID_HERE",
+          "name": "n8n-youtube"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "YOUR_DOCUMENT_ID_HERE",
+          "mode": "list",
+          "cachedResultName": "Post History",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/YOUR_DOCUMENT_ID_HERE/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Tweets",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/YOUR_DOCUMENT_ID_HERE/edit#gid=0"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTool",
+      "typeVersion": 4.7,
+      "position": [
+        3360,
+        1840
+      ],
+      "id": "c75d939a-42b6-4281-858f-48730d476f27",
+      "name": "Check Post History Log",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "YOUR_CREDENTIAL_ID_HERE",
+          "name": "n8n-youtube"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "ROLE\n\nYou are a founder-operator who has built things, failed at things, and learned the hard way.\n\nYou write short, casual one-line posts about business success and life success that are easy to understand and easy to react to.\n\nYou are not trying to teach formally or sound impressive.\n\nGOAL\n\nWrite a single-line post that sparks conversation.\n\nThe line should make someone think:\n“Yeah, I’ve run into that”\nor\n“That’s a good question”\n\nINPUTS\n\nYou have access to a Google Sheets Post History Log containing previously published posts.\n\nBefore writing, you must review this log.\n\nDo not repeat:\n\nthe same idea or topic\n\nthe same wording or phrasing\n\nthe same sentence pattern (for example, repeated “Why does…” posts)\n\nIf the new line feels similar to a past one, discard it and generate a different one.\n\nTOPIC SCOPE\n\nYou may write about:\n\nBuilding a business\n\nSales and customers\n\nMoney habits\n\nDiscipline and consistency\n\nConfidence and self-doubt\n\nRisk and reward\n\nLeadership\n\nHiring and firing\n\nTime management\n\nBurnout\n\nLong-term vs short-term thinking\n\nDoing hard things\n\nDelayed gratification\n\nPersonal responsibility\n\nTradeoffs in growth\n\nEffort vs luck\n\nAvoid trends, news, and motivational clichés.\n\nSTYLE RULES (VERY IMPORTANT)\n\nUse simple, everyday language.\n\nShort sentences.\n\nNo business jargon.\n\nAvoid abstract words like:\nleverage, paradigm, inherent, optimize, synergy, ecosystem, scale.\n\nSound like a real person talking, not a guru trying to preach.\n\nFORMAT RULES\n\nOutput exactly ONE line.\n\nIt may be:\n\na statement, OR\n\na question (questions are encouraged)\n\nNo emojis.\n\nNo hashtags.\n\nNo calls to action like “what do you think?”\n\nTONE\n\nCurious.\n\nSlightly opinionated.\n\nGrounded.\n\nNot preachy.\n\nNot salesy.\n\nNot smug.\n\nSENTENCE SHAPE ROTATION\n\nVary sentence shapes based on the Post History Log.\n\nRotate between:\n\ndirect questions\n\nsoft contrasts (X is easy, Y isn’t)\n\nobservations (“The hardest part of X is still Y”)\n\nquiet challenges (“Making more money solves X, but not Y”)\n\nDo not reuse the same shape twice in a row.\n\nFINAL CHECK (MANDATORY)\n\nBefore outputting, confirm:\n\nSomeone could reasonably reply to this\n\nIt sounds natural when read out loud\n\nIt isn’t vague enough to apply to any topic\n\nIt doesn’t resemble a past post in the log\n\nIf any fail, rewrite.\n\nFINAL OUTPUT\n\nOutput only the one line.\n\nNo explanation.\n\nNo labels.",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2.2,
+      "position": [
+        3216,
+        1584
+      ],
+      "id": "877ec1c3-20ce-4099-900a-11677a5f1034",
+      "name": "Social Media Manager"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        3216,
+        1840
+      ],
+      "id": "4ecd980e-2a57-4952-9ce7-6289de83c254",
+      "name": "Gemini 2.5 Flash",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "YOUR_CREDENTIAL_ID_HERE",
+          "name": "Davtek-Jan-2026"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "webhook",
+        "content": "=A post has but submitted to your social media accounts! \n\nHere is what was posted:\n\n {{ $('Social Media Manager').item.json.output }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.discord",
+      "typeVersion": 2,
+      "position": [
+        4384,
+        1584
+      ],
+      "id": "d8991f6a-7f40-47ce-b57c-c16b1c2f9fd9",
+      "name": "Notify on Discord",
+      "webhookId": "<YOUR_DISCORD_WEBHOOK_ID>",
+      "credentials": {
+        "discordWebhookApi": {
+          "id": "YOUR_CREDENTIAL_ID_HERE",
+          "name": "Discord Webhook account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "## Trigger\nThe workflow is executed on a specified schedule",
+        "height": 288,
+        "width": 256,
+        "color": 4
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        2832,
+        1472
+      ],
+      "typeVersion": 1,
+      "id": "f540e72b-9e2a-43f4-9ae5-f029ac7e4bda",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "content": "## Content Creation Agent\nUsing Gemini 2.5 Flash as it's LLM model, the AI agent uses it's tools to get inspiration for the post, and reference post history to not repeat a post.",
+        "height": 288,
+        "width": 432,
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        3120,
+        1472
+      ],
+      "typeVersion": 1,
+      "id": "59cd8f42-29ac-424f-8b58-2202eba4c657",
+      "name": "Sticky Note2"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://graph.threads.net/v1.0/YOUR_THREADS_ID/threads",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "Bearer YOUR_ACCESS_TOKEN"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"text\": \"{{ $json.output }}\",\n  \"media_type\": \"TEXT\"\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        3664,
+        1584
+      ],
+      "id": "a183a2e5-06e6-4612-bc70-75a638e61068",
+      "name": "Create Thread"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://graph.threads.net/v1.0/YOUR_THREADS_ID/threads_publish",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "Bearer YOUR_ACCESS_TOKEN"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"creation_id\": \"{{ $json.id }}\"\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        4000,
+        1584
+      ],
+      "id": "1778387d-0e34-4368-8f69-ee09dd5ec247",
+      "name": "Post Thread"
+    },
+    {
+      "parameters": {
+        "amount": 60
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        3840,
+        1584
+      ],
+      "id": "f9c1611a-6bc6-4e9d-a3ed-eb56173a1850",
+      "name": "Wait",
+      "webhookId": "YOUR_WAIT_WEBHOOK_ID_HERE"
+    },
+    {
+      "parameters": {
+        "content": "## Post to Threads \nThe content from the AI agent is taken and sent to Meta for it to be prepared for posting. Waits for one minute, then it's posted successfully",
+        "height": 288,
+        "width": 544,
+        "color": 6
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        3584,
+        1472
+      ],
+      "id": "eb615ecf-10b5-407f-9079-be5f6758c67a",
+      "name": "Sticky Note3"
+    },
+    {
+      "parameters": {
+        "content": "## Log and Update\nThe post is logged in Post History Sheet, and then notifies that the post has been completed.",
+        "height": 288,
+        "width": 432,
+        "color": 2
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        4160,
+        1472
+      ],
+      "id": "d20f6466-5576-49fd-a832-3d910b4fb4e4",
+      "name": "Sticky Note4"
+    },
+    {
+      "parameters": {
+        "content": "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n## AI Tools \nThe agent uses Google Gemini, which can be swapped out for any agent. It uses a Google Sheet for referencing past posts, avoiding repetition.",
+        "height": 336,
+        "width": 432,
+        "color": 3
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        3120,
+        1792
+      ],
+      "id": "b6dc2136-c076-4ef6-b952-5b1e2c4e85aa",
+      "name": "Sticky Note5"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "Social Media Manager",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update Post History Log": {
+      "main": [
+        [
+          {
+            "node": "Notify on Discord",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check Post History Log": {
+      "ai_tool": [
+        [
+          {
+            "node": "Social Media Manager",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Social Media Manager": {
+      "main": [
+        [
+          {
+            "node": "Create Thread",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Gemini 2.5 Flash": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Social Media Manager",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create Thread": {
+      "main": [
+        [
+          {
+            "node": "Wait",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Post Thread": {
+      "main": [
+        [
+          {
+            "node": "Update Post History Log",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait": {
+      "main": [
+        [
+          {
+            "node": "Post Thread",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "YOUR_VERSION_ID_HERE",
+  "meta": {
+    "instanceId": "YOUR_INSTANCE_ID_HERE"
+  },
+  "id": "YOUR_WORKFLOW_ID_HERE",
+  "tags": []
+}
