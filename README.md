@@ -129,3 +129,7 @@ This setup is similar to the multi-agent workflow where it calls sub-workflows f
 ![newsletter automation screenshot](https://github.com/user-attachments/assets/6e54f292-2b15-4196-a84c-bbedcdfe2c01)
 
 This neat little workflow takes all the text from your favorite newsletters, puts them in a Google Doc saved on your Drive. The way I currently use this is once the Google Doc is created in my Google Drive, I import that into a Notebook LM as a source. I then use the Audio Overview feature to turn the newsletter into a podcast or a breakdown so that I can listen to it instead while I'm on the go, on the train or out for a walk. I've signed up with quite a few newsletters, I can't read all of them all the time so I thought of this idea which I thought was pretty helpful and thought I would share. There is a Gmail version and an Outlook version, depending on what mail client you are using.
+
+### Threads AI Automation
+
+This is split into two parts. The first workflow, the one to setup credentials is what will provide you with your access token, which allows you to connect and authenticate to your Threads account. The second workflow is where all the action happens. Running on a schedule, this triggers the AI agent to think of an idea for content, checks for past posts to ensure there's no repitition. Then sends it's content to Meta, for it to be posted to Threads. Once posted, the post log history is updated and a notification is sent out to Discord.
