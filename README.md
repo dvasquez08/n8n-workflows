@@ -132,4 +132,8 @@ This neat little workflow takes all the text from your favorite newsletters, put
 
 ### Threads AI Automation
 
+![threads-credentials](https://github.com/user-attachments/assets/4bf222ab-fa07-46ef-a4c1-ecab7f7439e5)
+
+![threads-automation](https://github.com/user-attachments/assets/feb78ed1-a7dc-4d64-9ddf-9f4219c1425e)
+
 This is split into two parts. The first workflow, the one to setup credentials is what will provide you with your access token, which allows you to connect and authenticate to your Threads account. The second workflow is where all the action happens. Running on a schedule, this triggers the AI agent to think of an idea for content, checks for past posts to ensure there's no repitition. Then sends it's content to Meta, for it to be posted to Threads. Once posted, the post log history is updated and a notification is sent out to Discord.
