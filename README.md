@@ -28,6 +28,7 @@ For business inquiries: dvasquez@davtek.io
 - [AI Voice Assistant](#ai-voice-assistant)
 - [Newsletter Capture Automation](#newsletter-capture-automation)
 - [Threads AI Automation](#threads-ai-automation)
+- [Twitter Auto Reply Agent](#twitter-auto-reply-agent)
 
 ## Notion Daily Briefing
 
