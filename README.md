@@ -138,3 +138,7 @@ This neat little workflow takes all the text from your favorite newsletters, put
 ![threads-automation](https://github.com/user-attachments/assets/feb78ed1-a7dc-4d64-9ddf-9f4219c1425e)
 
 This is split into two parts. The first workflow, the one to setup credentials is what will provide you with your access token, which allows you to connect and authenticate to your Threads account. The second workflow is where all the action happens. Running on a schedule, this triggers the AI agent to think of an idea for content, checks for past posts to ensure there's no repitition. Then sends it's content to Meta, for it to be posted to Threads. Once posted, the post log history is updated and a notification is sent out to Discord.
+
+### Twitter Auto Reply Agent
+
+This is a simple workflow where the workflow will execute every so often and check for replies. If the Search for Tweets node detects a reply, it will pass that reply to the AI agent which will create a reply for that Tweet. It will pass that reply onto the HTTP request node which will send the content from the AI agent to your X account, and use the AI agent's reply for that specific tweet. It grabs the tweet ID from the Search for Tweets node, and the content from the agent to reply to the comment. No need to manually monitor your X account again, and you can have your agent reply to your tweets for you.
