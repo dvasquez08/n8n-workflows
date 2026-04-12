@@ -153,7 +153,7 @@ This workflow is an Agnet that can manage your inbox 24/7! You can use it to man
 
 The parent agent that manages the mailbox:
 
-![calendar-sub-agent](https://github.com/user-attachments/assets/96d8e442-8c8e-4934-9d41-36f4e39a6f6a)
+<img width="1476" height="680" alt="email-responder-parent-agent" src="https://github.com/user-attachments/assets/ff6f0bf3-3b3c-4598-91b5-907399bf828c" />
 
 Then, the calendar sub-agent that will book a meeting for you, when called by the parent agent:
 
