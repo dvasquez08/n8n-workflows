@@ -29,6 +29,7 @@ For business inquiries: dvasquez@davtek.io
 - [Newsletter Capture Automation](#newsletter-capture-automation)
 - [Threads AI Automation](#threads-ai-automation)
 - [Twitter Auto Reply Agent](#twitter-auto-reply-agent)
+- [Email Responder Agent](#email-responder-agent)
 
 ## Notion Daily Briefing
 
@@ -145,3 +146,18 @@ This is split into two parts. The first workflow, the one to setup credentials i
 ![x-auto-reply-agent](https://github.com/user-attachments/assets/c4288889-9bdd-4bf2-bd0d-d6b379146e65)
 
 This is a simple workflow where the workflow will execute every so often and check for replies. If the Search for Tweets node detects a reply, it will pass that reply to the AI agent which will create a reply for that Tweet. It will pass that reply onto the HTTP request node which will send the content from the AI agent to your X account, and use the AI agent's reply for that specific tweet. It grabs the tweet ID from the Search for Tweets node, and the content from the agent to reply to the comment. No need to manually monitor your X account again, and you can have your agent reply to your tweets for you.
+
+### Email Responder Agent
+
+This workflow is an Agnet that can manage your inbox 24/7! You can use it to manage a customer service email address where it can answer generic questions, leaving you with only more specific and complex questions, saving you hours of your time. The calednar sub-agent is included in this as it is a sub-workflow that is called whenever this agent books a meeting for you. It can call the sub-workflow and book a meeting on your Google calendar. That's right, this can book meetings for you too!
+
+The parent agent that manages the mailbox:
+
+<img width="1476" height="680" alt="email-responder-parent-agent" src="https://github.com/user-attachments/assets/ff6f0bf3-3b3c-4598-91b5-907399bf828c" />
+
+Then, the calendar sub-agent that will book a meeting for you, when called by the parent agent:
+
+![calendar-sub-agent](https://github.com/user-attachments/assets/8ea1e58a-22ab-46b9-bd1b-0e569ca2ab7b)
+
+This is a great workflow if you're too busy to be responding to all of your emails, answering generic questions.
+
