@@ -1,0 +1,550 @@
+{
+  "name": "Email Responder Agent",
+  "nodes": [
+    {
+      "parameters": {
+        "modelName": "models/gemini-3-pro-preview",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        48,
+        320
+      ],
+      "id": "67880403-f5b5-4dfe-96ed-da158162bedd",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "YOUR_GEMINI_CREDENTIAL_ID",
+          "name": "YOUR_GEMINI_CREDENTIAL_NAME"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "schemaType": "manual",
+        "inputSchema": "{\n\t\"type\": \"object\",\n\t\"properties\": {\n\t\t\"subject\": {\n\t\t\t\"type\": \"string\"\n\t\t},\n\t\t\"body\": {\n\t\t\t\"type\": \"string\"\t\t\n\t\t},\n      \"replyTo\": {\n\t\t\t\"type\": \"string\"\n\t},\n      \"meetingDate\": {\n        \"type\": \"date-time\"\n      },\n  }\n}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.3,
+      "position": [
+        656,
+        320
+      ],
+      "id": "17234553-2ff5-44a9-96a3-e46300f09a37",
+      "name": "Structured Output Parser"
+    },
+    {
+      "parameters": {
+        "description": "Call this tool for any calendar action.",
+        "workflowId": {
+          "__rl": true,
+          "value": "YOUR_CALENDAR_WORKFLOW_ID",
+          "mode": "list",
+          "cachedResultUrl": "/workflow/YOUR_CALENDAR_WORKFLOW_ID",
+          "cachedResultName": "RD-Calendar Agent"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 2.2,
+      "position": [
+        512,
+        320
+      ],
+      "id": "16a275d2-fc9f-4da6-bfe4-544a166d7e51",
+      "name": "Calendar Agent"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "5a577752-063b-439e-8477-56809895ee23",
+              "leftValue": "={{ $('Customer Service Agent').item.json.output.meetingDate }}",
+              "rightValue": "",
+              "operator": {
+                "type": "dateTime",
+                "operation": "exists",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1152,
+        0
+      ],
+      "id": "870e3a78-584b-482b-9cd5-d6f88fe67ade",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.text }}",
+        "hasOutputParser": true,
+        "options": {
+          "systemMessage": "=1. General Response Rules\n\n- You are a helpful assistant who answers customer questions based on a Google Doc and schedules meetings.\n- Use the customer's message for context: {{ $json.text }}\n- Be friendly, professional, concise, and straight to the point.\n- Never invent information that is not in the Knowledge Base tool.\n- When sending emails, always sign off as \"[YOUR_COMPANY_NAME] Team\"\n\n2. Calendar Tool Usage\n\n- If the customer asks to schedule, reschedule, update, or check availability for a meeting, you MUST call the calendarAgent tool.\n- Do not ask the customer for a meeting title. If no title is specified, set it to \"Meeting with [Customer’s Name]\" or \"Meeting with [Customer’s Email]\" if a name is not available.\n- Always include {{ $json.from.value[0].address }} in the attendees list.\n- If no duration is specified, assume 1 hour.\n\n3. Tool Definition\n\nTool: calendarAgent → Takes four fields:\n{\n  \"start_date\": \"YYYY-MM-DDTHH:mm:ss\",\n  \"end_date\": \"YYYY-MM-DDTHH:mm:ss\",\n  \"title\": \"Meeting with {{ $json.from.value[0].address }}\",\n  \"attendees\": [\"{{ $json.from.value[0].address }}\"]\n}\n\n4. Output Rules\n\nYour final output MUST ALWAYS be a single JSON object that matches the structure required by the output parser.\n\n- If a meeting is booked:\n  - The JSON output MUST include the \"meetingDate\" field. Use the \"start_date\" from the calendar tool for this value.\n  - The \"body\" field should contain a friendly message confirming the appointment.\n  - The \"replyTo\" field must be set to: {{ $json.from.value[0].address }}\n\n- If no meeting action is required:\n  - The JSON output should ONLY contain the \"subject\", \"body\", and \"replyTo\" fields.\n  - Do NOT include the \"meetingDate\" field.\n  - The \"body\" field should contain the answer to the customer's question.\n  - The \"replyTo\" field must be set to: {{ $json.from.value[0].address }}"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2.1,
+      "position": [
+        304,
+        0
+      ],
+      "id": "7ade7af1-0d85-4d9a-a4db-2b90154725ed",
+      "name": "Customer Service Agent"
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "={{ $json.from.value[0].address }}",
+        "contextWindowLength": 20
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        208,
+        320
+      ],
+      "id": "88672fe1-71da-4c8d-ae94-17e55541902d",
+      "name": "Simple Memory"
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "documentURL": "YOUR_GOOGLE_DOC_ID"
+      },
+      "type": "n8n-nodes-base.googleDocsTool",
+      "typeVersion": 2,
+      "position": [
+        352,
+        320
+      ],
+      "id": "87bffa21-fe53-41d4-839b-ab302854e299",
+      "name": "Knowledge Base",
+      "credentials": {
+        "googleDocsOAuth2Api": {
+          "id": "YOUR_GOOGLE_DOCS_CREDENTIAL_ID",
+          "name": "YOUR_GOOGLE_DOCS_CREDENTIAL_NAME"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "markAsRead",
+        "messageId": "={{ $('Message Received').item.json.id }}"
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        800,
+        0
+      ],
+      "id": "0d550c7a-9eb1-4fe9-bb9a-9b8975d797b3",
+      "name": "Mark as Read",
+      "webhookId": "YOUR_WEBHOOK_ID_1",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "YOUR_GMAIL_CREDENTIAL_ID",
+          "name": "YOUR_GMAIL_CREDENTIAL_NAME"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $json.output.replyTo }}",
+        "subject": "={{ $json.output.subject }}",
+        "message": "={{ $json.output.body.replace(/\\n/g, '<br>') }}",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        624,
+        0
+      ],
+      "id": "ec1ffac5-969c-486c-b86d-655d9ea1c90b",
+      "name": "Reply to Customer",
+      "webhookId": "YOUR_WEBHOOK_ID_2",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "YOUR_GMAIL_CREDENTIAL_ID",
+          "name": "YOUR_GMAIL_CREDENTIAL_NAME"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "addLabels",
+        "messageId": "={{ $('Message Received').item.json.id }}",
+        "labelIds": [
+          "YOUR_GMAIL_LABEL_ID"
+        ]
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        992,
+        0
+      ],
+      "id": "019a766c-06b6-490a-a709-f9d2fbb24d00",
+      "name": "Add Answered Label",
+      "webhookId": "YOUR_WEBHOOK_ID_3",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "YOUR_GMAIL_CREDENTIAL_ID",
+          "name": "YOUR_GMAIL_CREDENTIAL_NAME"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyMinute"
+            }
+          ]
+        },
+        "simple": false,
+        "filters": {
+          "includeSpamTrash": false,
+          "readStatus": "unread"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmailTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        80,
+        0
+      ],
+      "id": "4d906cf3-010c-4783-b2e8-82d68cc6bfba",
+      "name": "Message Received",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "YOUR_GMAIL_CREDENTIAL_ID",
+          "name": "YOUR_GMAIL_CREDENTIAL_NAME"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "appendOrUpdate",
+        "documentId": {
+          "__rl": true,
+          "value": "YOUR_GOOGLE_SHEET_ID",
+          "mode": "list",
+          "cachedResultName": "Customer List",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/YOUR_GOOGLE_SHEET_ID/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Customers",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/YOUR_GOOGLE_SHEET_ID/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Contact Email": "={{ $('Customer Service Agent').item.json.output.replyTo }}",
+            "Name": "={{ $('Message Received').item.json.from.value[0].name }}",
+            "Date Added": "={{ $now.format('MMMM d yyyy h:mm a').toUpperCase() }}"
+          },
+          "matchingColumns": [
+            "Contact Email"
+          ],
+          "schema": [
+            {
+              "id": "Name",
+              "displayName": "Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Contact Email",
+              "displayName": "Contact Email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Date Added",
+              "displayName": "Date Added",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        800,
+        192
+      ],
+      "id": "130091d4-3966-40cb-a337-fbf1759fad63",
+      "name": "Add Customer Details",
+      "alwaysOutputData": false,
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "YOUR_GOOGLE_SHEETS_CREDENTIAL_ID",
+          "name": "YOUR_GOOGLE_SHEETS_CREDENTIAL_NAME"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "webhook",
+        "content": "=Good day, \n\nA meeting has been booked for you with:\n\n{{ $json.Name }}\n\nAt: {{ $json['Date Added'] }}\n\nHave a nice day",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.discord",
+      "typeVersion": 2,
+      "position": [
+        1008,
+        192
+      ],
+      "id": "ebf09649-547d-4fb1-b2e4-68e6af28b3db",
+      "name": "Discord",
+      "webhookId": "YOUR_DISCORD_WEBHOOK_ID",
+      "credentials": {
+        "discordWebhookApi": {
+          "id": "YOUR_DISCORD_CREDENTIAL_ID",
+          "name": "YOUR_DISCORD_CREDENTIAL_NAME"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "## I'm a note \n\nNOTE: If you need the Calendar sub-agent, you can get the template for that here:\nhttps://github.com/dvasquez08/n8n-workflows\n\n1. Make sure you replace the Google credentials for all Gmail Google Sheets, and Google Docs nodes.\n\n2. Adjust the prompt for the agent to your specific needs.\n\n3. Change the LLM model to yours, or replace credentials if using Gemini.\n\n4. If you'd like to use Discord, replace the webhook to yours, or change the notification method to whatever you prefer ",
+        "height": 448,
+        "width": 352,
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -368,
+        0
+      ],
+      "typeVersion": 1,
+      "id": "03389362-8627-4b46-a2bf-78189db9b0e8",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "content": "# Email Responder Agent",
+        "height": 80,
+        "width": 432,
+        "color": 7
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        304,
+        -176
+      ],
+      "typeVersion": 1,
+      "id": "85a7ce71-0a20-4d97-997d-4ac8f180b294",
+      "name": "Sticky Note1"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Customer Service Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Structured Output Parser": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "Customer Service Agent",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Calendar Agent": {
+      "ai_tool": [
+        [
+          {
+            "node": "Customer Service Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Add Customer Details",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Customer Service Agent": {
+      "main": [
+        [
+          {
+            "node": "Reply to Customer",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "Customer Service Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Knowledge Base": {
+      "ai_tool": [
+        [
+          {
+            "node": "Customer Service Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Mark as Read": {
+      "main": [
+        [
+          {
+            "node": "Add Answered Label",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Reply to Customer": {
+      "main": [
+        [
+          {
+            "node": "Mark as Read",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Add Answered Label": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Message Received": {
+      "main": [
+        [
+          {
+            "node": "Customer Service Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Add Customer Details": {
+      "main": [
+        [
+          {
+            "node": "Discord",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false,
+    "timeSavedMode": "fixed",
+    "timezone": "America/Denver",
+    "callerPolicy": "workflowsFromSameOwner"
+  },
+  "versionId": "YOUR_VERSION_ID",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "YOUR_INSTANCE_ID"
+  },
+  "id": "YOUR_WORKFLOW_ID",
+  "tags": []
+}
